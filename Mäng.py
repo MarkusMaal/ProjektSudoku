@@ -1,7 +1,7 @@
 from random import randint
 
 class Grid:
-    def __init__(self, rida1, rida2, rida3, veerg1, veerg2, veerg3):
+    def __init__(self, rida1 = "000", rida2 = "000", rida3 = "000", veerg1 = "000", veerg2 = "000", veerg3 = "000"):
         self.rida1 = rida1
         self.rida2 = rida2
         self.rida3 = rida3
@@ -17,22 +17,26 @@ class Grid:
     def Kontrolli(self, rida, veerg, arv):
         if veerg == 0:
             if rida == 0:
-                if arv in self.rida1:
+                if str(arv) in self.rida1:
                     return False
+                else:
+                    return True
             elif rida == 1:
-                if arv in self.rida2:
+                if str(arv) in self.rida2:
                     return False
+                else:
+                    return True
             elif rida == 2:
-                if arv in self.rida3:
+                if str(arv) in self.rida3:
                     return False
-            else:
-                return True
-        elif veerg == 1:
-            if arv in self.veerg1:
+                else:
+                    return True
+        elif veerg > 0:
+            if str(arv) in self.veerg1:
                 return False
-            elif arv in self.veerg2:
+            elif str(arv) in self.veerg2:
                 return False
-            elif arv in self.veerg3:
+            elif str(arv) in self.veerg3:
                 return False
             else:
                 return True
@@ -41,6 +45,11 @@ class Grid:
         self.rida1 = sektsioon.split("\n")[0]
         self.rida2 = sektsioon.split("\n")[1]
         self.rida3 = sektsioon.split("\n")[2]
+        self.DefineeriVeerud()
+
+    def ToString(self):
+        print(str(self.rida1) + "\n" + str(self.rida2) + "\n" + str(self.rida3))
+
 
 # loogika testimine
 arvud = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -73,14 +82,12 @@ def CreateSection(count, arvud, empties, eelmine = "000\n000\n000", ülemine = "
             if len(e) > 3:
                 e = e[:3]
             nchecks += e
-            print(check, e)
         teststring = eelread[0]
 
         test = randint(0, len(arvud) - 1)
         while (teststring in eelread[rida - 1]) or (teststring in ülekolonnid[rida - 1]):
             test = randint(0, len(arvud) - 1)
             teststring = str(arvud[test])
-            print(teststring)
         s += teststring
         arvud.remove(arvud[test])
         if i == 2 or i == 5:
@@ -88,13 +95,8 @@ def CreateSection(count, arvud, empties, eelmine = "000\n000\n000", ülemine = "
             s += "\n"
     return s
 
-def CheckBlock(location, clusterid):
-    isin = False
-    ly = 1
-    for cluster in clusterid:
-        for group in cluster.split("*"):
-            print(group)
 
-clusterid = []
-clusterid.append(CreateSection(9, arvud, 3))
-print(clusterid)
+test = Grid()
+test.Defineeri(CreateSection(9, arvud, 3))
+test.ToString()
+print(test.Kontrolli(0, 0, 5))
