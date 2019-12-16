@@ -98,6 +98,7 @@ def CreateSection(count, arvud, empties, eelmine = "000\n000\n000", ülemine = "
 
 rida1 = [Grid(), Grid(), Grid()]
 for i in range(3):
+    arvud = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     rida1[i].Defineeri(CreateSection(9, arvud, 3))
     rida1[i].ToString()
 print(rida1[0].Kontrolli(0, 0, 5))
