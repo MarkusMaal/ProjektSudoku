@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import font
+from random import *
 import time
 
 
@@ -36,19 +37,28 @@ class Cell:
         tahvel.tag_bind(self.number, '<1>', self.clicked)
         raam.bind("<Key>", self.keypress)
 
+# raskusaste
+# 0 - ei kuvata numbreid
+# n - kuvatakse n arv numbreid uut mängu alustades
+
+
+raskusaste = 24
 
 # veerg - kontrollitav veerg
 # int_cells - kõik listid argumendina
 # märgid - leitud märgid reast
 # duplikaate - kui True, leiti mitu ühesugust numbrit
+
+
 def KontrolliVertikaalrida(int_cells, veerg):
     märgid = []
     duplikaate = False
     for i in range(9):
-        if not int_cells[i][veerg] in märgid:
-            märgid.append(int_cells[i][veerg])
-        else:
-            duplikaate = True
+        if not int_cells[i][veerg] == 0:
+            if not int_cells[i][veerg] in märgid:
+                märgid.append(int_cells[i][veerg])
+            else:
+                duplikaate = True
     return duplikaate
 
 
@@ -87,6 +97,24 @@ def NewGame():
             arv = 0
             one_grid.append(arv)
         cell_grid.append(one_grid)
+    for i in range(raskusaste):
+        setcol = i + 1
+        while setcol > 9:
+            setcol -= 9
+        if setcol < 1:
+            setcol = 1
+        randid_col = randint(0, 8)
+        randid_row = randint(0, 8)
+        cell_grid[randid_col][randid_row] = setcol
+        while not ((KontrolliHorisontaalrida(cell_grid, randid_row) == False) and
+                   (KontrolliSisemist(cell_grid, LeiaSuurKast(randid_row, randid_col)) == False) and
+                   (KontrolliVertikaalrida(cell_grid, randid_col) == False)):
+            setcol += 1
+            if setcol == 10:
+                randid_col = randint(0, 8)
+                randid_row = randint(0, 8)
+            else:
+                cell_grid[randid_col][randid_row] = setcol
     cells = []
     for i in range(0, 9):
         for j in range(0, 9):
@@ -114,10 +142,11 @@ def KontrolliHorisontaalrida(int_cells, rida):
     märgid = []
     duplikaate = False
     for i in range(9):
-        if not int_cells[rida][i] in märgid:
-            märgid.append(int_cells[rida][i])
-        else:
-            duplikaate = True
+        if not int_cells[rida][i] == 0:
+            if not int_cells[rida][i] in märgid:
+                märgid.append(int_cells[rida][i])
+            else:
+                duplikaate = True
     return duplikaate
 
 
@@ -179,10 +208,11 @@ def KontrolliSisemist(int_cells, kast):
         offset_y = 6
     for i in range(3):
         for j in range(3):
-            if not int_cells[offset_y + i][offset_x + j] in märgid:
-                märgid.append(int_cells[offset_y + i][offset_x + j])
-            else:
-                duplikaate = True
+            if not int_cells[offset_y + i][offset_x + j] == 0:
+                if not int_cells[offset_y + i][offset_x + j] in märgid:
+                    märgid.append(int_cells[offset_y + i][offset_x + j])
+                else:
+                    duplikaate = True
     return duplikaate
 
 
