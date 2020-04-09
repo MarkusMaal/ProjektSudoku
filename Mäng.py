@@ -37,13 +37,6 @@ class Cell:
         tahvel.tag_bind(self.number, '<1>', self.clicked)
         raam.bind("<Key>", self.keypress)
 
-# raskusaste
-# 0 - ei kuvata numbreid
-# n - kuvatakse n arv numbreid uut mängu alustades
-
-
-raskusaste = 24
-
 # veerg - kontrollitav veerg
 # int_cells - kõik listid argumendina
 # märgid - leitud märgid reast
@@ -188,6 +181,12 @@ def NewGame():
                 cycles += 1
             jupid.remove(jupid[r1])
 
+    # see koodujupp eemaldab teatud numbrid kastidest
+    # kuni kaks korda
+    for i in range(2):
+        for j in range(9):
+            r1 = randint(0, 8)
+            cell_grid[j][r1] = 0
     cells = []
     for i in range(0, 9):
         for j in range(0, 9):
