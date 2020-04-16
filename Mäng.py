@@ -67,7 +67,7 @@ def KontrolliVertikaalrida(int_cells, veerg , nulliga = False):
                     märgid.append( str(kontroll_list[i]))
                 else:
                     duplikaate = True
-    print(kontroll_list, duplikaate)
+    # print(kontroll_list, duplikaate)
     return duplikaate
 
 raam = Tk()
@@ -142,7 +142,7 @@ def NewGame():
                 r1 += 1
                 if r1 > len(jupid) - 1:
                     r1 = 0
-                print(offset - row)
+                # print(offset - row)
                 cell_grid[row][offset - row] = jupid[r1]
                 cycles += 1
                 if cycles == 10:
@@ -250,7 +250,7 @@ def NewGame():
                 row = 3
             r1 = randint(0, len(jupid) - 1)
             cell_grid[row][offset - row] = jupid[r1]
-            print(cell_grid[row][offset - row - (row % 3)])
+            # print(cell_grid[row][offset - row - (row % 3)])
             cycles = 0
             fine = True
             while KontrolliHorisontaalrida(cell_grid, row) and KontrolliVertikaalrida(cell_grid, offset - row - (row % 3)):
