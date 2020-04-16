@@ -70,7 +70,6 @@ def KontrolliVertikaalrida(int_cells, veerg , nulliga = False):
     print(kontroll_list, duplikaate)
     return duplikaate
 
-
 raam = Tk()
 raam.title("Sudoku")
 raam.geometry("700x500")
