@@ -295,7 +295,10 @@ def CheckBtn():
         if KontrolliSisemist(cell_grid, i, False): currentstate = False
         if KontrolliVertikaalrida(cell_grid, i, False): currentstate = False
         if KontrolliHorisontaalrida(cell_grid, i, False): currentstate = False
-    print(currentstate)
+    if currentstate:
+        print("Lahendus vale!")
+    else:
+        print("Lahendus õige!")
 
 
 # kontrollib horistonaalset rida
