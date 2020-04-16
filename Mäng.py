@@ -315,11 +315,18 @@ def KontrolliSisemist(int_cells, kast, nulliga = False):
 def Draw():
     DrawLines()
     uus_mäng = Button(raam, text="Uus mäng", command=NewGame)
-    uus_mäng.grid(row=0, column=1)
+    uus_mäng.place(x=525, y=200)
+    raskusaste_label = Label(raam, text ="Raskusaste:")
+    raskusaste_label.place(x=525, y=300)
+    raskusaste = Entry(raam, width=2)
+    raskusaste.place(x=600, y=300)
     for i in cells:
         Cell.DrawCell(i)
     kontrolli = Button(raam, text="Kontrolli", command=CheckBtn)
-    kontrolli.grid(row=0, column=2)
+    kontrolli.place(x=525, y=250)
+    var = 0
+    abistajad = Checkbutton(raam, text="Abistajad", variable=var)
+    abistajad.place(x=525, y=350)
 
 
 cells = []
