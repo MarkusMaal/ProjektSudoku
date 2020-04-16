@@ -6,36 +6,42 @@ import time
 
 # klass, milles üks objekt on 1 ruut
 class Cell:
-    def __init__(self, x, y, value):
+    def __init__(self, x, y, value, protected, cell_grid):
         self.x = x
         self.y = y
         self.value = value
+        self.protected = protected
+        self.cell_grid = cell_grid
 
     # joonistab ruudu ja sisse numbri
     def DrawCell(self):
         self.joonis = tahvel.create_rectangle(self.x, self.y, self.x+50, self.y+50, fill="white", outline="black", width=1, activefill="lightblue")
-        self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value))
+        if not self.protected:
+            self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value))
+        else:
+            self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold')
         tahvel.tag_bind(self.joonis, '<1>', self.clicked)
         tahvel.tag_bind(self.number, '<1>', self.clicked)
 
     # määrab numbri, mis cell'i/ruudu eelnevale numbrile asemele panna
-    def keypress(self, event=None):
+    def keypress(self, event):
         if int(event.char) > 0 and int(event.char) < 10:
             self.value = event.char
-            cell_grid[self.y // 55][self.x // 55] = event.char
-            print("Vertikaalne: " + str(KontrolliVertikaalrida(cell_grid, self.x // 55)))
-            print("Horisontaalne: " + str(KontrolliHorisontaalrida(cell_grid, self.y // 55)))
-            print("Sisemine: " + str(KontrolliSisemist(cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
+            self.cell_grid[self.y // 55][self.x // 55] = event.char
+            print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
+            print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
+            print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
             tahvel.delete(self.number)
             tahvel.delete(self.joonis)
             Cell.DrawCell(self)
 
     # teeb koha "..."'iks, ootab sisendit kasutajalt
     def clicked(self, event=None):
-        tahvel.delete(self.number)
-        self.number = tahvel.create_text(self.x + 25, self.y + 25, text="...")
-        tahvel.tag_bind(self.number, '<1>', self.clicked)
-        raam.bind("<Key>", self.keypress)
+        if not self.protected:
+            tahvel.delete(self.number)
+            self.number = tahvel.create_text(self.x + 25, self.y + 25, text="...")
+            tahvel.tag_bind(self.number, '<1>', self.clicked)
+            raam.bind("<Key>", self.keypress)
 
 # veerg - kontrollitav veerg
 # int_cells - kõik listid argumendina
@@ -191,7 +197,11 @@ def NewGame():
     for i in range(0, 9):
         for j in range(0, 9):
             outpt = str(cell_grid[i][j]).replace("0", " ")
-            cell = Cell(j * 55, i * 55, outpt)
+            if cell_grid[i][j] == 0:
+                prt = False
+            else:
+                prt = True
+            cell = Cell(j * 55, i * 55, outpt, prt, cell_grid)
             cells.append(cell)
     DrawLines()
     for cell in cells:
@@ -214,6 +224,7 @@ def KontrolliHorisontaalrida(int_cells, rida, nulliga = False):
     märgid = []
     duplikaate = False
     kontroll_check = int_cells[rida]
+    print(kontroll_check)
     for i in range(9):
         if nulliga:
             if not str(kontroll_check[i]) in märgid:
@@ -319,7 +330,7 @@ cells = []
 for i in range(0, 9):
     for j in range(0, 9):
         outpt = str(cell_grid[i][j]).replace("0", " ")
-        cell = Cell(j*55, i*55, outpt)
+        cell = Cell(j*55, i*55, outpt, False, cell_grid)
         cells.append(cell)
 
 
