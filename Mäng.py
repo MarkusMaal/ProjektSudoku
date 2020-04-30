@@ -106,106 +106,117 @@ def DrawLines():
 
 
 def NewGame():
-    cell_grid = []
-    for i in range(9):
-        one_grid = []
-        for j in range(9):
-            arv = 0
-            one_grid.append(arv)
-        cell_grid.append(one_grid)
-    # genereeri numbrid
-    for column in range(3):
-        trial = 90001
-        while trial > 1000:
-            jupid1 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            for z in range(0, 7, 3):
-                row = z - 1
-                for i in range(3):
-                    offset = randint(z, z + 2) - z + (column * 3)
-                    if randint(0, 1):
-                        row += 1
-                    if row == z - 1:
-                        row = z
-                    trial = 0
+    # mida suurem on muutaja raskusaste, seda rohkem on vihjeid ette antud
+    raskusaste = 35
+    ute = 0
+    while ute < raskusaste:
+        cell_grid = []
+        for i in range(9):
+            one_grid = []
+            for j in range(9):
+                arv = 0
+                one_grid.append(arv)
+            cell_grid.append(one_grid)
+        ute = 0
+        # genereeri numbrid
+        for column in range(3):
+            trial = 90001
+            while trial > 1000:
+                jupid1 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                for z in range(0, 7, 3):
+                    row = z - 1
+                    for i in range(3):
+                        offset = randint(z, z + 2) - z + (column * 3)
+                        if randint(0, 1):
+                            row += 1
+                        if row > len(cell_grid) - 1:
+                            row = len(cell_grid) - 1
+                        if row == z - 1:
+                            row = z
+                        trial = 0
 
-                    r1 = randint(0, len(jupid1) - 1)
-                    if len(cell_grid[row]) >= offset + 1:
-                        while int(cell_grid[row][offset]) > 0:
+                        r1 = randint(0, len(jupid1) - 1)
+                        if len(cell_grid[row]) >= offset + 1:
+                            while int(cell_grid[row][offset]) > 0:
+                                row = randint(z, z + 2)
+                                offset = randint(z, z + 2) - z + (column * 3)
+                            cell_grid[row][offset] = jupid1[r1]
+                        else:
+                            cell_grid[row][offset] = 0
+                        while KontrolliSisemist(cell_grid, column + 1 + z):
+                            cell_grid[row][offset] = jupid1[randint(0, len(jupid1) - 1)]
+                        while KontrolliHorisontaalrida(cell_grid, row) or KontrolliVertikaalrida(cell_grid, offset):
+                            cell_grid[row][offset] = 0
                             row = randint(z, z + 2)
                             offset = randint(z, z + 2) - z + (column * 3)
-                        cell_grid[row][offset] = jupid1[r1]
-                    else:
-                        cell_grid[row][offset] = 0
-                    while KontrolliSisemist(cell_grid, column + 1 + z):
-                        cell_grid[row][offset] = jupid1[randint(0, len(jupid1) - 1)]
-                    while KontrolliHorisontaalrida(cell_grid, row) or KontrolliVertikaalrida(cell_grid, offset):
-                        cell_grid[row][offset] = 0
-                        row = randint(z, z + 2)
-                        offset = randint(z, z + 2) - z + (column * 3)
-                        r1 = randint(0, len(jupid1) - 1)
-                        cell_grid[row][offset] = jupid1[r1]
-                    jupid1.remove(jupid1[r1])
+                            r1 = randint(0, len(jupid1) - 1)
+                            cell_grid[row][offset] = jupid1[r1]
+                        jupid1.remove(jupid1[r1])
 
-# lisab rohkem numbreid väljakule, et muuta mäng võimalikuks
-    for i in range(9):
-        x_off = 0
-        y_off = 0
-        if i == 1:
-            x_off = 3
-            y_off = 0
-        elif i == 2:
-            x_off = 6
-            y_off = 0
-        elif i == 3:
+    # lisab rohkem numbreid väljakule, et muuta mäng võimalikuks
+        for i in range(9):
             x_off = 0
-            y_off = 3
-        elif i == 4:
-            x_off = 3
-            y_off = 3
-        elif i == 5:
-            x_off = 6
-            y_off = 3
-        elif i == 6:
-            x_off = 0
-            y_off = 6
-        elif i == 7:
-            x_off = 3
-            y_off = 6
-        elif i == 8:
-            x_off = 6
-            y_off = 6
-        jupid = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        for y in range(y_off, y_off + 3):
-            for x in range(x_off, x_off + 3):
-                if cell_grid[y][x] in jupid:
-                    jupid.remove(cell_grid[y][x])
-        for y in range(y_off, y_off + 2):
-            for x in range(x_off, x_off + 2):
-                if cell_grid[y][x] == 0:
-                    r1 = randint(0, len(jupid) - 1)
-                    cell_grid[y][x] = jupid[r1]
-                    cycles = 0
-                    while KontrolliHorisontaalrida(cell_grid, y) or KontrolliVertikaalrida(cell_grid, x):
-                        if cycles > 10000:
-                            cell_grid[y][x] = 0
-                            break
+            y_off = 0
+            if i == 1:
+                x_off = 3
+                y_off = 0
+            elif i == 2:
+                x_off = 6
+                y_off = 0
+            elif i == 3:
+                x_off = 0
+                y_off = 3
+            elif i == 4:
+                x_off = 3
+                y_off = 3
+            elif i == 5:
+                x_off = 6
+                y_off = 3
+            elif i == 6:
+                x_off = 0
+                y_off = 6
+            elif i == 7:
+                x_off = 3
+                y_off = 6
+            elif i == 8:
+                x_off = 6
+                y_off = 6
+            jupid = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            for y in range(y_off, y_off + 3):
+                for x in range(x_off, x_off + 3):
+                    if cell_grid[y][x] in jupid:
+                        jupid.remove(cell_grid[y][x])
+            for y in range(y_off, y_off + 2):
+                for x in range(x_off, x_off + 2):
+                    if cell_grid[y][x] == 0:
                         r1 = randint(0, len(jupid) - 1)
                         cell_grid[y][x] = jupid[r1]
-                        cycles += 1
+                        cycles = 0
+                        while KontrolliHorisontaalrida(cell_grid, y) or KontrolliVertikaalrida(cell_grid, x):
+                            if cycles > 10000:
+                                cell_grid[y][x] = 0
+                                break
+                            r1 = randint(0, len(jupid) - 1)
+                            cell_grid[y][x] = jupid[r1]
+                            cycles += 1
 
-# kontrollib võimalikke võimatuid olukordasid
-    for r in range(len(cell_grid)):
-        testlen = len(cell_grid[r])
-        for x in range(testlen):
-            cell_backup = cell_grid[r][x]
-            for i in range(9):
-                nat = i + 1
-                cell_grid[r][x] = nat
-                dupes = KontrolliVertikaalrida(cell_grid, x, False, True) + KontrolliHorisontaalrida(cell_grid, r, False, True)
-                if dupes > 1:
-                    cell_grid[r][x] = 0
-                else:
-                    cell_grid[r][x] = cell_backup
+    # kontrollib võimalikke võimatuid olukordasid
+        for r in range(len(cell_grid)):
+            testlen = len(cell_grid[r])
+            for x in range(testlen):
+                cell_backup = cell_grid[r][x]
+                for i in range(9):
+                    nat = i + 1
+                    cell_grid[r][x] = nat
+                    dupes = KontrolliVertikaalrida(cell_grid, x, False, True) + KontrolliHorisontaalrida(cell_grid, r, False, True)
+                    if dupes > 1:
+                        cell_grid[r][x] = 0
+                    else:
+                        cell_grid[r][x] = cell_backup
+        for row in cell_grid:
+            for i in row:
+                if not int(i) == 0:
+                    ute += 1
 
     # see koodujupp eemaldab teatud numbrid kastidest
     # kuni kaks korda
