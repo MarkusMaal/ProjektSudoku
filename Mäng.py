@@ -29,18 +29,6 @@ class Cell:
 
     # määrab numbri, mis cell'i/ruudu eelnevale numbrile asemele panna
     def keypress(self, event):
-        if 0 <= int(event.char) < 10:
-            if not int(event.char) == 0:
-                self.value = event.char
-            else:
-                self.value = " "
-            self.cell_grid[self.y // 55][self.x // 55] = event.char
-            print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
-            print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
-            print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
-            tahvel.delete(self.number)
-            tahvel.delete(self.joonis)
-            Cell.DrawCell(self)
         try:
             if 0 <= int(event.char) < 10:
                 if not int(event.char) == 0:
