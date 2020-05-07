@@ -41,7 +41,48 @@ class Cell:
             tahvel.delete(self.number)
             tahvel.delete(self.joonis)
             Cell.DrawCell(self)
+        try:
+            if 0 <= int(event.char) < 10:
+                if not int(event.char) == 0:
+                    self.value = event.char
+                else:
+                    self.value = " "
+                self.cell_grid[self.y // 55][self.x // 55] = event.char
+                print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
+                print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
+                print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
+                tahvel.delete(self.number)
+                tahvel.delete(self.joonis)
+                Cell.DrawCell(self)
+        except ValueError:
+            if event.keysym == "Up":
+                for i in cells:
+                    if i.x == self.x and i.y == self.y - 55:
+                        Cell.DrawCell(self)
+                        Cell.arrow_move(i)
+            if event.keysym == "Down":
+                for i in cells:
+                    if i.x == self.x and i.y == self.y + 55:
+                        Cell.DrawCell(self)
+                        Cell.arrow_move(i)
+            if event.keysym == "Left":
+                for i in cells:
+                    if i.x == self.x - 55 and i.y == self.y:
+                        print(i.value)
+                        Cell.DrawCell(self)
+                        Cell.arrow_move(i)
+            if event.keysym == "Right":
+                for i in cells:
+                    if i.x == self.x + 55 and i.y == self.y:
+                        Cell.DrawCell(self)
+                        Cell.arrow_move(i)
 
+    def arrow_move(self):
+        if not self.protected:
+            tahvel.delete(self.number)
+            self.number = tahvel.create_text(self.x + 25, self.y + 25, text="...")
+            tahvel.tag_bind(self.number, '<1>', self.clicked)
+            raam.bind("<Key>", self.keypress)
     # teeb koha "..."'iks, ootab sisendit kasutajalt
     def clicked(self, event=None):
         if not self.protected:
