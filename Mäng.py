@@ -50,7 +50,9 @@ class Cell:
                     self.value = event.char
                 else:
                     self.value = " "
-                self.cell_grid[self.y // 55][self.x // 55] = event.char
+                if not self.value == " ":
+                    self.cell_grid[self.y // 55][self.x // 55] = event.char
+                    cell_grid[self.y // 55][self.x // 55] = self.value
                 print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
                 print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
                 print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
@@ -62,21 +64,25 @@ class Cell:
                 for i in cells:
                     if i.x == self.x and i.y == self.y - 55:
                         Cell.DrawCell(self)
+                        cell_grid[self.y // 55][self.x // 55] = self.value
                         Cell.arrow_move(i)
             if event.keysym == "Down":
                 for i in cells:
                     if i.x == self.x and i.y == self.y + 55:
                         Cell.DrawCell(self)
+                        cell_grid[self.y // 55][self.x // 55] = self.value
                         Cell.arrow_move(i)
             if event.keysym == "Left":
                 for i in cells:
                     if i.x == self.x - 55 and i.y == self.y:
                         Cell.DrawCell(self)
+                        cell_grid[self.y // 55][self.x // 55] = self.value
                         Cell.arrow_move(i)
             if event.keysym == "Right":
                 for i in cells:
                     if i.x == self.x + 55 and i.y == self.y:
                         Cell.DrawCell(self)
+                        cell_grid[self.y // 55][self.x // 55] = self.value
                         Cell.arrow_move(i)
 
     def arrow_move(self):
