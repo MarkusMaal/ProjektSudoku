@@ -8,6 +8,21 @@ import time
 # Sudoku projekt
 # klass, milles üks objekt on 1 ruut
 
+
+# Loo väli näidise põhjal
+# Muuda seda muutujat, et näidist kasutada/mitte kasutada
+kasuta_näidist = False
+näidis = [[5, 3, 0, 0, 7, 0, 0, 0, 0],
+          [6, 0, 0, 1, 9, 5, 0, 0, 0],
+          [0, 9, 8, 0, 0, 0, 0, 6, 0],
+          [8, 0, 0, 0, 6, 0, 0, 0, 3],
+          [4, 0, 0, 8, 0, 3, 0, 0, 1],
+          [7, 0, 0, 0, 2, 0, 0, 0, 6],
+          [0, 6, 0, 0, 0, 0, 2, 8, 0],
+          [0, 0, 0, 4, 1, 9, 0, 0, 5],
+          [0, 0, 0, 0, 8, 0, 0, 7, 9]]
+
+
 class Cell:
     def __init__(self, x, y, value, protected, cell_grid):
         self.x = x
@@ -71,6 +86,7 @@ class Cell:
             self.number = tahvel.create_text(self.x + 25, self.y + 25, text="...")
             tahvel.tag_bind(self.number, '<1>', self.clicked)
             raam.bind("<Key>", self.keypress)
+
     # teeb koha "..."'iks, ootab sisendit kasutajalt
     def clicked(self, event=None):
         if not self.protected:
@@ -142,18 +158,6 @@ def DrawLines():
     tahvel.create_line(163, 0, 163, 500, width=3, fill="white")
     tahvel.create_line(328, 0, 328, 500, width=3, fill="white")
 
-
-# Loo väli näidise põhjal
-kasuta_näidist = True
-näidis = [[5, 3, 0, 0, 7, 0, 0, 0, 0],
-          [6, 0, 0, 1, 9, 5, 0, 0, 0],
-          [0, 9, 8, 0, 0, 0, 0, 6, 0],
-          [8, 0, 0, 0, 6, 0, 0, 0, 3],
-          [4, 0, 0, 8, 0, 3, 0, 0, 1],
-          [7, 0, 0, 0, 2, 0, 0, 0, 6],
-          [0, 6, 0, 0, 0, 0, 2, 8, 0],
-          [0, 0, 0, 4, 1, 9, 0, 0, 5],
-          [0, 0, 0, 0, 8, 0, 0, 7, 9]]
 
 
 def NewGame():
