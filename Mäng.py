@@ -42,7 +42,8 @@ class Cell:
         tahvel.tag_bind(self.joonis, '<1>', self.clicked)
         tahvel.tag_bind(self.number, '<1>', self.clicked)
 
-    # määrab numbri, mis cell'i/ruudu eelnevale numbrile asemele panna
+    # 1)määrab numbri, mis cell'i/ruudu eelnevale numbrile asemele panna
+    # 2)hoolitseb klahvidega liikumise eest
     def keypress(self, event):
         try:
             if 0 <= int(event.char) < 10:
@@ -59,6 +60,7 @@ class Cell:
                 tahvel.delete(self.number)
                 tahvel.delete(self.joonis)
                 Cell.DrawCell(self)
+        #kui vajutatud klahv ei ole number, siis testib, kas on üks nooltest ja läheb sealt edasi
         except ValueError:
             if event.keysym == "Up":
                 for i in cells:
@@ -84,7 +86,7 @@ class Cell:
                         Cell.DrawCell(self)
                         cell_grid[self.y // 55][self.x // 55] = self.value
                         Cell.arrow_move(i)
-
+    #noolega liikumine
     def arrow_move(self):
         if not self.protected:
             tahvel.delete(self.number)
