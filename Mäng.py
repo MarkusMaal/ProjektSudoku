@@ -71,7 +71,6 @@ class Cell:
             if event.keysym == "Left":
                 for i in cells:
                     if i.x == self.x - 55 and i.y == self.y:
-                        print(i.value)
                         Cell.DrawCell(self)
                         Cell.arrow_move(i)
             if event.keysym == "Right":
@@ -433,6 +432,13 @@ def KontrolliSisemist(int_cells, kast, nulliga=False):
     return duplikaate
 
 
+def CheckAuto():
+    global kasuta_näidist
+    if kasuta_näidist:
+        kasuta_näidist = False
+    elif not kasuta_näidist:
+        kasuta_näidist = True
+
 # joonistab ruudustiku
 def Draw(cell_grid):
     DrawLines()
@@ -449,6 +455,10 @@ def Draw(cell_grid):
     var = 0
     abistajad = Checkbutton(raam, text="Abistajad", variable=var)
     abistajad.place(x=525, y=350)
+    var = 0
+    global autocheck
+    autocheck = Checkbutton(raam, text="Kasuta näidist", variable=var, command=CheckAuto)
+    autocheck.place(x=525, y=370)
 
 
 
