@@ -55,7 +55,6 @@ class Cell:
             if event.keysym == "Left":
                 for i in cells:
                     if i.x == self.x-55 and i.y == self.y:
-                        print(i.value)
                         Cell.DrawCell(self)
                         Cell.arrow_move(i)
             if event.keysym == "Right":
