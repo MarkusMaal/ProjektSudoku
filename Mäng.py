@@ -33,12 +33,16 @@ class Cell:
 
     # joonistab ruudu ja sisse numbri
     def DrawCell(self):
+        if KontrolliVertikaalrida(self.cell_grid, self.x // 55) or KontrolliHorisontaalrida(self.cell_grid, self.y // 55) or KontrolliSisemist( self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55)):
+            textcol = "red"
+        else:
+            textcol = "black"
         self.joonis = tahvel.create_rectangle(self.x, self.y, self.x + 50, self.y + 50, fill="white", outline="black",
                                               width=1, activefill="lightblue")
         if not self.protected:
-            self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value))
+            self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), fill=textcol)
         else:
-            self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold')
+            self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold', fill=textcol)
         tahvel.tag_bind(self.joonis, '<1>', self.clicked)
         tahvel.tag_bind(self.number, '<1>', self.clicked)
 
@@ -102,6 +106,9 @@ class Cell:
             tahvel.tag_bind(self.number, '<1>', self.clicked)
             raam.bind("<Key>", self.keypress)
 
+    # tagastab asukoha ruudustikus
+    def GetLocation(self):
+        return self.x // 55, self.y // 55
 
 # veerg - kontrollitav veerg
 # int_cells - kõik listid argumendina
@@ -171,11 +178,17 @@ def NewGame():
     # mida suurem on muutaja raskusaste, seda rohkem on vihjeid ette antud
     global cell_grid
     if not kasuta_näidist:
-        raskusaste = 35
+        raskusaste = 25
         if raskusaste_v2li.get().isnumeric():
             raskusaste = int(raskusaste_v2li.get())
+            if raskusaste < 15 or raskusaste > 45:
+                messagebox.showerror("Raskusaste pole sobiv", "Sisestage arv vahemikus 15-45.")
+                return
+        else:
+            messagebox.showerror("Raskusaste pole sobiv", "Palun sisestage arv")
+            return
         ute = 0
-        while not (ute >= raskusaste):
+        while not ((ute < raskusaste + 5) and (ute > raskusaste - 5)):
             cell_grid = []
             for i in range(9):
                 one_grid = []
@@ -447,6 +460,7 @@ def CheckAuto():
     elif not kasuta_näidist:
         kasuta_näidist = True
 
+
 # joonistab ruudustiku
 def Draw(cell_grid):
     DrawLines()
@@ -456,6 +470,7 @@ def Draw(cell_grid):
     raskusaste_label.place(x=525, y=300)
     global raskusaste_v2li
     raskusaste_v2li = Entry(raam, width=2)
+    raskusaste_v2li.insert(0, "25")
     raskusaste_v2li.place(x=600, y=300)
     for i in cells:
         Cell.DrawCell(i)
