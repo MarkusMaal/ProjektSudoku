@@ -181,7 +181,7 @@ def NewGame():
         raskusaste = 25
         if raskusaste_v2li.get().isnumeric():
             raskusaste = int(raskusaste_v2li.get())
-            if raskusaste < 1 or raskusaste > 35:
+            if raskusaste < 15 or raskusaste > 35:
                 messagebox.showerror("Raskusaste pole sobiv", "Sisestage arv vahemikus 15-35.")
                 return
         else:
