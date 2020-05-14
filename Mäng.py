@@ -181,8 +181,8 @@ def NewGame():
         raskusaste = 25
         if raskusaste_v2li.get().isnumeric():
             raskusaste = int(raskusaste_v2li.get())
-            if raskusaste < 1 or raskusaste > 42:
-                messagebox.showerror("Raskusaste pole sobiv", "Sisestage arv vahemikus 15-42.")
+            if raskusaste < 1 or raskusaste > 35:
+                messagebox.showerror("Raskusaste pole sobiv", "Sisestage arv vahemikus 15-35.")
                 return
         else:
             messagebox.showerror("Raskusaste pole sobiv", "Palun sisestage arv")
@@ -407,7 +407,6 @@ def LeiaHorisontaalsedDuplikaadid(int_cells, rida):
                 märgid.append(str(kontroll_check[i]))
             else:
                 duplikaate.append([rida, i])
-    print(duplikaate)
     return duplikaate
 
 
@@ -423,7 +422,6 @@ def LeiaVertikaalsedDuplikaadid(int_cells, veerg):
                 märgid.append(str(kontroll_check[i]))
             else:
                 duplikaate.append([i, veerg])
-    print(duplikaate)
     return duplikaate
 
 def DuplikaatideArv(int_cells, y, x):
@@ -533,7 +531,7 @@ def Draw(cell_grid):
     DrawLines()
     uus_mäng = Button(raam, text="Uus mäng", command=NewGame)
     uus_mäng.place(x=525, y=200)
-    raskusaste_label = Label(raam, text="Raskusaste:")
+    raskusaste_label = Label(raam, text="Vihjeid:")
     raskusaste_label.place(x=525, y=300)
     global raskusaste_v2li
     raskusaste_v2li = Entry(raam, width=2)
