@@ -7,6 +7,36 @@
         cell_grid[row][offset] = jupid1[r1]
         jupid1.remove(jupid1[r1])
 
+            # kontrollib võimalikke võimatuid olukordasid
+            for r in range(len(cell_grid)):
+                testlen = len(cell_grid[r])
+                for x in range(testlen):
+                    cell_backup = cell_grid[r][x]
+                    for i in range(9):
+                        nat = i + 1
+                        cell_grid[r][x] = nat
+                        dupes = DuplikaatideArv(cell_grid, x, r)
+                        if dupes == 3:
+                            for element in LeiaHorisontaalsedDuplikaadid(cell_grid, r):
+                                cell_grid[element[1]][element[0]] = 0
+                            for element in LeiaVertikaalsedDuplikaadid(cell_grid, x):
+                                cell_grid[element[1]][element[0]] = 0
+            currentstate = True
+            for i in range(1, 9, 1):
+                if KontrolliSisemist(cell_grid, i, False):
+                    currentstate = False
+                if KontrolliVertikaalrida(cell_grid, i, False):
+                    currentstate = False
+            for i in range(0, 9, 1):
+                if KontrolliHorisontaalrida(cell_grid, i, False):
+                    currentstate = False
+            if not currentstate:
+                for i in range(len(cell_grid)):
+                    cell_grid[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            for row in cell_grid:
+                for i in row:
+                    if not int(i) == 0:
+                        ute += 1
 """
     offset = 2
     jupid = [1, 2, 3, 4, 5, 6, 7, 8, 9]

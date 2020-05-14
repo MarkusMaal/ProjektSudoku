@@ -58,9 +58,9 @@ class Cell:
                 if not self.value == " ":
                     self.cell_grid[self.y // 55][self.x // 55] = event.char
                     cell_grid[self.y // 55][self.x // 55] = self.value
-                print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
-                print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
-                print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
+                #print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
+                #print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
+                #print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
                 tahvel.delete(self.number)
                 tahvel.delete(self.joonis)
                 Cell.DrawCell(self)
@@ -181,14 +181,14 @@ def NewGame():
         raskusaste = 25
         if raskusaste_v2li.get().isnumeric():
             raskusaste = int(raskusaste_v2li.get())
-            if raskusaste < 15 or raskusaste > 45:
-                messagebox.showerror("Raskusaste pole sobiv", "Sisestage arv vahemikus 15-45.")
+            if raskusaste < 1 or raskusaste > 42:
+                messagebox.showerror("Raskusaste pole sobiv", "Sisestage arv vahemikus 15-42.")
                 return
         else:
             messagebox.showerror("Raskusaste pole sobiv", "Palun sisestage arv")
             return
         ute = 0
-        while not ((ute < raskusaste + 5) and (ute > raskusaste - 5)):
+        while not ute >= raskusaste:
             cell_grid = []
             for i in range(9):
                 one_grid = []
@@ -285,14 +285,28 @@ def NewGame():
                 for x in range(testlen):
                     cell_backup = cell_grid[r][x]
                     for i in range(9):
-                        nat = i + 1
-                        cell_grid[r][x] = nat
-                        dupes = KontrolliVertikaalrida(cell_grid, x, False, True) +\
-                                KontrolliHorisontaalrida(cell_grid, r, False, True)
-                        if dupes > 1:
-                            cell_grid[r][x] = 0
-                        else:
-                            cell_grid[r][x] = cell_backup
+                        if cell_backup == 0:
+                            nat = i + 1
+                            cell_grid[r][x] = nat
+                            dupes = DuplikaatideArv(cell_grid, x, r)
+                            if dupes > 1:
+                                for element in LeiaHorisontaalsedDuplikaadid(cell_grid, r):
+                                    cell_grid[element[1]][element[0]] = 0
+                                for element in LeiaVertikaalsedDuplikaadid(cell_grid, x):
+                                    cell_grid[element[1]][element[0]] = 0
+                        cell_grid[r][x] = cell_backup
+            currentstate = True
+            for i in range(1, 9, 1):
+                if KontrolliSisemist(cell_grid, i, False):
+                    currentstate = False
+                if KontrolliVertikaalrida(cell_grid, i, False):
+                    currentstate = False
+            for i in range(0, 9, 1):
+                if KontrolliHorisontaalrida(cell_grid, i, False):
+                    currentstate = False
+            if not currentstate:
+                for i in range(len(cell_grid)):
+                    cell_grid[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
             for row in cell_grid:
                 for i in row:
                     if not int(i) == 0:
@@ -379,6 +393,59 @@ def KontrolliHorisontaalrida(int_cells, rida, nulliga=False, tagasta_arv=False):
             return False
     else:
         return duplikaate
+
+
+
+
+def LeiaHorisontaalsedDuplikaadid(int_cells, rida):
+    märgid = []
+    duplikaate = []
+    kontroll_check = int_cells[rida]
+    for i in range(9):
+        if not str(kontroll_check[i]) == "0":
+            if not str(kontroll_check[i]) in märgid:
+                märgid.append(str(kontroll_check[i]))
+            else:
+                duplikaate.append([rida, i])
+    print(duplikaate)
+    return duplikaate
+
+
+def LeiaVertikaalsedDuplikaadid(int_cells, veerg):
+    märgid = []
+    duplikaate = []
+    kontroll_check = []
+    for b in int_cells:
+        kontroll_check.append(b[veerg])
+    for i in range(9):
+        if not str(kontroll_check[i]) == "0":
+            if not str(kontroll_check[i]) in märgid:
+                märgid.append(str(kontroll_check[i]))
+            else:
+                duplikaate.append([i, veerg])
+    print(duplikaate)
+    return duplikaate
+
+def DuplikaatideArv(int_cells, y, x):
+    märgid = []
+    duplikaate = 0
+    kontroll_check = []
+    for b in int_cells:
+        kontroll_check.append(b[x])
+    for i in range(9):
+        if not str(kontroll_check[i]) == "0":
+            if not str(kontroll_check[i]) in märgid:
+                märgid.append(str(kontroll_check[i]))
+            else:
+                duplikaate += 1
+    kontroll_check = int_cells[y]
+    for i in range(9):
+        if not str(kontroll_check[i]) == "0":
+            if not str(kontroll_check[i]) in märgid:
+                märgid.append(str(kontroll_check[i]))
+            else:
+                duplikaate += 1
+    return duplikaate
 
 
 # leiab suure kasti vastavalt väikse kasti koordinaatidele
