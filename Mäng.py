@@ -60,7 +60,7 @@ class Cell:
                 tahvel.delete(self.number)
                 tahvel.delete(self.joonis)
                 Cell.DrawCell(self)
-        #kui vajutatud klahv ei ole number, siis testib, kas on üks nooltest ja läheb sealt edasi
+        # kui vajutatud klahv ei ole number, siis testib, kas on üks nooltest ja läheb sealt edasi
         except ValueError:
             if event.keysym == "Up":
                 for i in cells:
@@ -172,8 +172,10 @@ def NewGame():
     global cell_grid
     if not kasuta_näidist:
         raskusaste = 35
+        if raskusaste_v2li.get().isnumeric():
+            raskusaste = int(raskusaste_v2li.get())
         ute = 0
-        while ute < raskusaste:
+        while not (ute >= raskusaste):
             cell_grid = []
             for i in range(9):
                 one_grid = []
@@ -272,10 +274,8 @@ def NewGame():
                     for i in range(9):
                         nat = i + 1
                         cell_grid[r][x] = nat
-                        dupes = KontrolliVertikaalrida(cell_grid, x, False, True) + KontrolliHorisontaalrida(cell_grid,
-                                                                                                             r,
-                                                                                                             False,
-                                                                                                             True)
+                        dupes = KontrolliVertikaalrida(cell_grid, x, False, True) +\
+                                KontrolliHorisontaalrida(cell_grid, r, False, True)
                         if dupes > 1:
                             cell_grid[r][x] = 0
                         else:
@@ -291,6 +291,7 @@ def NewGame():
             for j, b in enumerate(a):
                 one_grid.append(näidis[i][j])
             cell_grid.append(one_grid)
+
 
     # see koodujupp eemaldab teatud numbrid kastidest
     # kuni kaks korda
@@ -325,7 +326,6 @@ def CheckBtn():
 
 
 def check_cells(c_g):
-    print(c_g)
     currentstate = True
     for i in range(1, 9, 1):
         if KontrolliSisemist(c_g, i, True):
@@ -454,8 +454,9 @@ def Draw(cell_grid):
     uus_mäng.place(x=525, y=200)
     raskusaste_label = Label(raam, text="Raskusaste:")
     raskusaste_label.place(x=525, y=300)
-    raskusaste = Entry(raam, width=2)
-    raskusaste.place(x=600, y=300)
+    global raskusaste_v2li
+    raskusaste_v2li = Entry(raam, width=2)
+    raskusaste_v2li.place(x=600, y=300)
     for i in cells:
         Cell.DrawCell(i)
     kontrolli = Button(raam, text="Kontrolli", command=CheckBtn)
