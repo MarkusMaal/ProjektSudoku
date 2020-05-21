@@ -21,7 +21,7 @@ näidis = [[5, 3, 0, 0, 7, 0, 0, 0, 0],
           [0, 6, 0, 0, 0, 0, 2, 8, 0],
           [0, 0, 0, 4, 1, 9, 0, 0, 5],
           [0, 0, 0, 0, 8, 0, 0, 7, 9]]
-
+solved_grid = []
 
 class Cell:
     def __init__(self, x, y, value, protected, cell_grid):
@@ -33,10 +33,29 @@ class Cell:
 
     # joonistab ruudu ja sisse numbri
     def DrawCell(self):
-        if KontrolliVertikaalrida(self.cell_grid, self.x // 55) or KontrolliHorisontaalrida(self.cell_grid, self.y // 55) or KontrolliSisemist( self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55)):
+        textcol = "black"
+        #else:
+        #    textcol = "black"
+        if LeiaSuurKast(self.x // 55, self.y // 55) == 1:
+            textcol = "darkred"
+        elif LeiaSuurKast(self.x // 55, self.y // 55) == 2:
+            textcol = "green"
+        elif LeiaSuurKast(self.x // 55, self.y // 55) == 3:
+            textcol = "blue"
+        elif LeiaSuurKast(self.x // 55, self.y // 55) == 4:
+            textcol = "purple"
+        elif LeiaSuurKast(self.x // 55, self.y // 55) == 5:
+            textcol = "midnightblue"
+        elif LeiaSuurKast(self.x // 55, self.y // 55) == 6:
+            textcol = "magenta"
+        elif LeiaSuurKast(self.x // 55, self.y // 55) == 7:
+            textcol = "darkgreen"
+        elif LeiaSuurKast(self.x // 55, self.y // 55) == 8:
+            textcol = "dimgray"
+        elif LeiaSuurKast(self.x // 55, self.y // 55) == 9:
+            textcol = "brown"
+        if KontrolliVertikaalrida(self.cell_grid, self.x // 55) or KontrolliHorisontaalrida(self.cell_grid, self.y // 55) or KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55)):
             textcol = "red"
-        else:
-            textcol = "black"
         self.joonis = tahvel.create_rectangle(self.x, self.y, self.x + 50, self.y + 50, fill="white", outline="black",
                                               width=1, activefill="lightblue")
         if not self.protected:
@@ -181,7 +200,7 @@ def KontrolliVertikaalrida(int_cells, veerg, nulliga=False, tagasta_arv=False):
 
 raam = Tk()
 raam.title("Sudoku")
-raam.geometry("700x500")
+raam.geometry("750x500")
 
 tahvel = Canvas(raam, width=500, height=500, background="white")
 tahvel.grid()
@@ -216,14 +235,14 @@ def NewGame():
         raskusaste = 25
         if raskusaste_v2li.get().isnumeric():
             raskusaste = int(raskusaste_v2li.get())
-            if raskusaste < 15 or raskusaste > 35:
-                messagebox.showerror("Raskusaste pole sobiv", "Sisestage arv vahemikus 15-35.")
+            if raskusaste < 15 or raskusaste > 45:
+                messagebox.showerror("Raskusaste pole sobiv", "Sisestage arv vahemikus 15-45.")
                 return
         else:
             messagebox.showerror("Raskusaste pole sobiv", "Palun sisestage arv")
             return
         ute = 0
-        while not ute >= raskusaste:
+        while raskusaste >= ute:
             cell_grid = []
             for i in range(9):
                 one_grid = []
@@ -232,6 +251,7 @@ def NewGame():
                     one_grid.append(arv)
                 cell_grid.append(one_grid)
             ute = 0
+            """
             # genereeri numbrid
             for column in range(3):
                 trial = 90001
@@ -257,15 +277,14 @@ def NewGame():
                                 cell_grid[row][offset] = jupid1[r1]
                             else:
                                 cell_grid[row][offset] = 0
-                            while KontrolliSisemist(cell_grid, column + 1 + z):
-                                cell_grid[row][offset] = jupid1[randint(0, len(jupid1) - 1)]
                             while KontrolliHorisontaalrida(cell_grid, row) or KontrolliVertikaalrida(cell_grid, offset):
-                                cell_grid[row][offset] = 0
-                                row = randint(z, z + 2)
-                                offset = randint(z, z + 2) - z + (column * 3)
-                                r1 = randint(0, len(jupid1) - 1)
-                                cell_grid[row][offset] = jupid1[r1]
-                            jupid1.remove(jupid1[r1])
+                                if not KontrolliSisemist(cell_grid, column + 1 + z):
+                                    cell_grid[row][offset] = 0
+                                    row = randint(z, z + 2)
+                                    offset = randint(z, z + 2) - z + (column * 3)
+                                    r1 = randint(0, len(jupid1) - 1)
+                                    cell_grid[row][offset] = jupid1[r1]
+                            jupid1.remove(jupid1[r1])"""
 
             # lisab rohkem numbreid väljakule, et muuta mäng võimalikuks
             for i in range(9):
@@ -300,22 +319,67 @@ def NewGame():
                     for x in range(x_off, x_off + 3):
                         if cell_grid[y][x] in jupid:
                             jupid.remove(cell_grid[y][x])
-                for y in range(y_off, y_off + 2):
-                    for x in range(x_off, x_off + 2):
-                        if cell_grid[y][x] == 0:
-                            r1 = randint(0, len(jupid) - 1)
-                            cell_grid[y][x] = jupid[r1]
-                            cycles = 0
-                            while KontrolliHorisontaalrida(cell_grid, y) or KontrolliVertikaalrida(cell_grid, x):
-                                if cycles > 10000:
-                                    cell_grid[y][x] = 0
-                                    break
+                bad = True
+                cycles = 0
+                while bad:
+                    if cycles > 9000:
+                        break
+                    jupid = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    for y in range(y_off, y_off + 3):
+                        for x in range(x_off, x_off + 3):
+                            if cell_grid[y][x] in jupid:
+                                jupid.remove(cell_grid[y][x])
+                    for y in range(y_off, y_off + 3):
+                        for x in range(x_off, x_off + 3):
+                            if int(cell_grid[y][x]) == 0:
                                 r1 = randint(0, len(jupid) - 1)
                                 cell_grid[y][x] = jupid[r1]
-                                cycles += 1
+                                bad = False
+                                while KontrolliHorisontaalrida(cell_grid, y) or KontrolliVertikaalrida(cell_grid, x) or KontrolliSisemist(cell_grid, i + 1):
+                                    r1 = randint(0, len(jupid) - 1)
+                                    cell_grid[y][x] = jupid[r1]
+                                    jupid.remove(jupid[r1])
+                                    if len(jupid) == 0:
+                                        bad = True
+                                        cell_grid[y][x] = 0
+                                        break
+                                    if not (KontrolliHorisontaalrida(cell_grid, y) or KontrolliVertikaalrida(cell_grid, x) or KontrolliSisemist(cell_grid, i + 1)):
+                                        bad = False
+                                        break
+                            if bad:
+                                break
+                        if bad:
+                            cycles += 1
+                            break
 
+            """cycles = 0
+                                            bad = False
+                                            for i in range(0, 8):
+                                                if KontrolliHorisontaalrida(cell_grid, y) or KontrolliVertikaalrida(cell_grid, x) or KontrolliSisemist(cell_grid, i + 1):
+                                                    for i in range(3):
+                                                        cell_grid[y_off + i][x_off] = 0
+                                                        cell_grid[y_off + i][x_off + 1] = 0
+                                                        cell_grid[y_off + i][x_off + 2] = 0
+                                                        jupid = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                                                        for u in range(y_off, y_off + 3):
+                                                            for v in range(x_off, x_off + 3):
+                                                                if cell_grid[u][v] in jupid:
+                                                                    jupid.remove(cell_grid[u][v])
+                                                        r1 = randint(0, len(jupid) - 1)
+                                                        cell_grid[y][x] = jupid[r1]
+                                                        bad = True
+                                                        cycles += 1
+                                                    #if cycles > 10:
+                                                    #    print("tsükkel " + str(cycles))
+                                                    #    for i in range(3):
+                                                    #        cell_grid[y_off + i][x_off] = 0
+                                                    #        cell_grid[y_off + i][x_off + 1] = 0
+                                                    #        cell_grid[y_off + i][x_off + 2] = 0
+                                                    #    break
+                                                cycles += 1
+            """
             # kontrollib võimalikke võimatuid olukordasid
-            for r in range(len(cell_grid)):
+            """for r in range(len(cell_grid)):
                 testlen = len(cell_grid[r])
                 for x in range(testlen):
                     cell_backup = cell_grid[r][x]
@@ -341,7 +405,21 @@ def NewGame():
                     currentstate = False
             if not currentstate:
                 for i in range(len(cell_grid)):
-                    cell_grid[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    cell_grid[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0]"""
+            global solved_grid
+            solved_grid = []
+            for element in cell_grid:
+                solved_grid.append(element)
+            for i in range(ute - raskusaste):
+                r1 = randint(0, 8)
+                r2 = randint(0, 8)
+                if int(cell_grid[r1][r2]) == 0:
+                    while int(cell_grid[r1][r2]) == 0:
+                        r1 = randint(0, 8)
+                        r2 = randint(0, 8)
+                    cell_grid[r1][r2] = 0
+                else:
+                    cell_grid[r1][r2] = 0
             for row in cell_grid:
                 for i in row:
                     if not int(i) == 0:
@@ -354,14 +432,9 @@ def NewGame():
                 one_grid.append(näidis[i][j])
             cell_grid.append(one_grid)
 
-
     # see koodujupp eemaldab teatud numbrid kastidest
     # kuni kaks korda
     # hetkel pole kasutusel
-    """for i in range(3):
-        for j in range(9):
-            r1 = randint(0, 8)
-            cell_grid[j][r1] = 0"""
 
     # kuvab numbrid ekraanile
     global cells
@@ -386,6 +459,11 @@ def NewGame():
 def CheckBtn():
     global cell_grid
     check_cells(cell_grid)
+
+
+def SolveBtn():
+    global solved_grid
+    messagebox.showinfo("more things tbd", str(solved_grid).replace("],", "\n").replace("[", "").replace("]", ""))
 
 
 def check_cells(c_g):
@@ -577,6 +655,8 @@ def Draw(cell_grid, cells):
         Cell.DrawCell(i)
     kontrolli = Button(raam, text="Kontrolli", command=CheckBtn)
     kontrolli.place(x=525, y=250)
+    lahendus = Button(raam, text="Lahendus (hetkel ei toimi)", command=SolveBtn)
+    lahendus.place(x=525, y=150)
     var = 0
     abistajad = Checkbutton(raam, text="Abistajad", variable=var)
     abistajad.place(x=525, y=350)
@@ -584,7 +664,7 @@ def Draw(cell_grid, cells):
     global autocheck
     autocheck = Checkbutton(raam, text="Kasuta näidist", variable=var, command=CheckAuto)
     autocheck.place(x=525, y=370)
-
+    NewGame()
 
 
 while True:
