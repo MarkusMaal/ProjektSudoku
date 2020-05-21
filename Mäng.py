@@ -410,6 +410,10 @@ def NewGame():
             solved_grid = []
             for element in cell_grid:
                 solved_grid.append(element)
+            for row in cell_grid:
+                for i in row:
+                    if not int(i) == 0:
+                        ute += 1
             for i in range(ute - raskusaste):
                 r1 = randint(0, 8)
                 r2 = randint(0, 8)
@@ -420,10 +424,6 @@ def NewGame():
                     cell_grid[r1][r2] = 0
                 else:
                     cell_grid[r1][r2] = 0
-            for row in cell_grid:
-                for i in row:
-                    if not int(i) == 0:
-                        ute += 1
     else:
         cell_grid = []
         for i, a in enumerate(näidis):
