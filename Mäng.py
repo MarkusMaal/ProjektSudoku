@@ -36,24 +36,6 @@ class Cell:
         textcol = "black"
         #else:
         #    textcol = "black"
-        if LeiaSuurKast(self.x // 55, self.y // 55) == 1:
-            textcol = "darkred"
-        elif LeiaSuurKast(self.x // 55, self.y // 55) == 2:
-            textcol = "green"
-        elif LeiaSuurKast(self.x // 55, self.y // 55) == 3:
-            textcol = "blue"
-        elif LeiaSuurKast(self.x // 55, self.y // 55) == 4:
-            textcol = "purple"
-        elif LeiaSuurKast(self.x // 55, self.y // 55) == 5:
-            textcol = "midnightblue"
-        elif LeiaSuurKast(self.x // 55, self.y // 55) == 6:
-            textcol = "magenta"
-        elif LeiaSuurKast(self.x // 55, self.y // 55) == 7:
-            textcol = "darkgreen"
-        elif LeiaSuurKast(self.x // 55, self.y // 55) == 8:
-            textcol = "dimgray"
-        elif LeiaSuurKast(self.x // 55, self.y // 55) == 9:
-            textcol = "brown"
         if KontrolliVertikaalrida(self.cell_grid, self.x // 55) or KontrolliHorisontaalrida(self.cell_grid, self.y // 55) or KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55)):
             textcol = "red"
         self.joonis = tahvel.create_rectangle(self.x, self.y, self.x + 50, self.y + 50, fill="white", outline="black",
