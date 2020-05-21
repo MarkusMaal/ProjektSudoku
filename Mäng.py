@@ -40,9 +40,15 @@ class Cell:
         self.joonis = tahvel.create_rectangle(self.x, self.y, self.x + 50, self.y + 50, fill="white", outline="black",
                                               width=1, activefill="lightblue")
         if not self.protected:
-            self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), fill=textcol)
+            if self.value == "0":
+                self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), fill="white")
+            else:
+                self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), fill=textcol)
         else:
-            self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold', fill=textcol)
+            if self.value == "0":
+                self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold', fill="white")
+            else:
+                self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold', fill="black")
         tahvel.tag_bind(self.joonis, '<1>', self.clicked)
         tahvel.tag_bind(self.number, '<1>', self.clicked)
 
@@ -50,20 +56,21 @@ class Cell:
     # 2)hoolitseb klahvidega liikumise eest
     def keypress(self, event):
         try:
-            if 0 <= int(event.char) < 10:
-                if not int(event.char) == 0:
-                    self.value = event.char
-                else:
-                    self.value = " "
-                if not self.value == " ":
-                    self.cell_grid[self.y // 55][self.x // 55] = event.char
-                    cell_grid[self.y // 55][self.x // 55] = self.value
-                #print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
-                #print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
-                #print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
-                tahvel.delete(self.number)
-                tahvel.delete(self.joonis)
-                Cell.DrawCell(self)
+            if not self.protected:
+                if 0 <= int(event.char) < 10:
+                    if not int(event.char) == 0:
+                        self.value = event.char
+                    else:
+                        self.value = "0"
+                    if not self.value == "0":
+                        self.cell_grid[self.y // 55][self.x // 55] = event.char
+                        cell_grid[self.y // 55][self.x // 55] = self.value
+                    #print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
+                    #print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
+                    #print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
+                    tahvel.delete(self.number)
+                    tahvel.delete(self.joonis)
+                    Cell.DrawCell(self)
         # kui vajutatud klahv ei ole number, siis testib, kas on üks nooltest ja läheb sealt edasi
         except ValueError:
             if event.keysym == "Up":
@@ -89,13 +96,41 @@ class Cell:
                     if i.x == self.x + 55 and i.y == self.y:
                         Cell.DrawCell(self)
                         cell_grid[self.y // 55][self.x // 55] = self.value
+                        print(self.value)
                         Cell.arrow_move(i)
-    #noolega liikumine
+        if self.protected:
+            if event.keysym == "Up":
+                for i in cells:
+                    if i.x == self.x and i.y == self.y - 55:
+                        Cell.DrawCell(self)
+                        cell_grid[self.y // 55][self.x // 55] = self.value
+                        Cell.arrow_move(i)
+            if event.keysym == "Down":
+                for i in cells:
+                    if i.x == self.x and i.y == self.y + 55:
+                        Cell.DrawCell(self)
+                        cell_grid[self.y // 55][self.x // 55] = self.value
+                        Cell.arrow_move(i)
+            if event.keysym == "Left":
+                for i in cells:
+                    if i.x == self.x - 55 and i.y == self.y:
+                        Cell.DrawCell(self)
+                        cell_grid[self.y // 55][self.x // 55] = self.value
+                        Cell.arrow_move(i)
+            if event.keysym == "Right":
+                for i in cells:
+                    if i.x == self.x + 55 and i.y == self.y:
+                        Cell.DrawCell(self)
+                        cell_grid[self.y // 55][self.x // 55] = self.value
+                        Cell.arrow_move(i)
+    #nooltega liikumine
     def arrow_move(self):
         if not self.protected:
             tahvel.delete(self.number)
             self.number = tahvel.create_text(self.x + 25, self.y + 25, text="...")
             tahvel.tag_bind(self.number, '<1>', self.clicked)
+            raam.bind("<Key>", self.keypress)
+        else:
             raam.bind("<Key>", self.keypress)
 
     # teeb koha "..."'iks, ootab sisendit kasutajalt
@@ -329,10 +364,11 @@ def NewGame():
             cell_grid[j][r1] = 0"""
 
     # kuvab numbrid ekraanile
+    global cells
     cells = []
     for i in range(0, 9):
         for j in range(0, 9):
-            outpt = str(cell_grid[i][j]).replace("0", " ")
+            outpt = str(cell_grid[i][j]).replace("0", "0")
             if cell_grid[i][j] == 0:
                 prt = False
             else:
@@ -527,7 +563,7 @@ def CheckAuto():
 
 
 # joonistab ruudustiku
-def Draw(cell_grid):
+def Draw(cell_grid, cells):
     DrawLines()
     uus_mäng = Button(raam, text="Uus mäng", command=NewGame)
     uus_mäng.place(x=525, y=200)
@@ -556,8 +592,8 @@ while True:
     # loob Cell() objektid
     for i in range(0, 9):
         for j in range(0, 9):
-            outpt = str(cell_grid[i][j]).replace("0", " ")
+            outpt = str(cell_grid[i][j]).replace("0", "0")
             cell = Cell(j * 55, i * 55, outpt, False, cell_grid)
             cells.append(cell)
-    Draw(cell_grid)
+    Draw(cell_grid, cells)
     raam.mainloop()
