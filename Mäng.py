@@ -640,9 +640,6 @@ def Draw(cell_grid, cells):
     lahendus = Button(raam, text="Lahendus (hetkel ei toimi)", command=SolveBtn)
     lahendus.place(x=525, y=150)
     var = 0
-    abistajad = Checkbutton(raam, text="Abistajad", variable=var)
-    abistajad.place(x=525, y=350)
-    var = 0
     global autocheck
     autocheck = Checkbutton(raam, text="Kasuta näidist", variable=var, command=CheckAuto)
     autocheck.place(x=525, y=370)
