@@ -1,2 +1,2 @@
 # ProjektSudoku
-Sudoku projekt
+Pythonis kirjutatud Sudoku mäng.
