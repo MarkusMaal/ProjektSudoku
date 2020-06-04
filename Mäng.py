@@ -374,7 +374,7 @@ def SolveBtn():
                                     KontrolliSisemist(cell_grid, LeiaSuurKast(one[0] + 1, one[1] + 1)):
                                     cell_grid[one[1]][one[0]] = cell_backup
         # teade kasutajale, juhul kui sudokut ei saa mingil põhjusel lahendada
-        if cycles > 350:
+        if cycles > 150:
             messagebox.showerror("Lahenduse leidmine nurjus", "Lahendust ei leitud. Võite proovida järgnevat:\n - Kustutage ruudud valede arvudega\n"
                                 " - Proovige teist Sudokut")
             break
