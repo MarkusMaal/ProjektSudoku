@@ -303,6 +303,8 @@ def SolveBtn():
         if empties == 0:
             break
         if cycles > 200:
+            messagebox.showinfo("Lahendust ei leitud. Võite proovida järgnevat:\n - Kustutage ruudud valede arvudega\n"
+                                " - Proovige teist Sudokut", "Lahenduse leidmine nurjus")
             break
     global cells
     cells = []
@@ -336,9 +338,8 @@ def check_cells(c_g):
         messagebox.showerror("Lahenduse kontroll", "Lahendus vale!")
 
 
-# kontrollib horistonaalset rida
 
-
+# Lahendaja
 def SolveOne():
     global cell_grid
     solutions = []
@@ -459,6 +460,10 @@ def SolveOne():
                 if goodies == 1:
                     cell_grid[good][column] = (g + 1)
 
+
+# kontrollib horistonaalset rida
+
+
 def KontrolliHorisontaalrida(int_cells, rida, nulliga=False, tagasta_arv=False):
     märgid = []
     duplikaate = 0
@@ -482,56 +487,6 @@ def KontrolliHorisontaalrida(int_cells, rida, nulliga=False, tagasta_arv=False):
             return False
     else:
         return duplikaate
-
-
-def LeiaHorisontaalsedDuplikaadid(int_cells, rida):
-    märgid = []
-    duplikaate = []
-    kontroll_check = int_cells[rida]
-    for i in range(9):
-        if not str(kontroll_check[i]) == "0":
-            if not str(kontroll_check[i]) in märgid:
-                märgid.append(str(kontroll_check[i]))
-            else:
-                duplikaate.append([rida, i])
-    return duplikaate
-
-
-def LeiaVertikaalsedDuplikaadid(int_cells, veerg):
-    märgid = []
-    duplikaate = []
-    kontroll_check = []
-    for b in int_cells:
-        kontroll_check.append(b[veerg])
-    for i in range(9):
-        if not str(kontroll_check[i]) == "0":
-            if not str(kontroll_check[i]) in märgid:
-                märgid.append(str(kontroll_check[i]))
-            else:
-                duplikaate.append([i, veerg])
-    return duplikaate
-
-
-def DuplikaatideArv(int_cells, y, x):
-    märgid = []
-    duplikaate = 0
-    kontroll_check = []
-    for b in int_cells:
-        kontroll_check.append(b[x])
-    for i in range(9):
-        if not str(kontroll_check[i]) == "0":
-            if not str(kontroll_check[i]) in märgid:
-                märgid.append(str(kontroll_check[i]))
-            else:
-                duplikaate += 1
-    kontroll_check = int_cells[y]
-    for i in range(9):
-        if not str(kontroll_check[i]) == "0":
-            if not str(kontroll_check[i]) in märgid:
-                märgid.append(str(kontroll_check[i]))
-            else:
-                duplikaate += 1
-    return duplikaate
 
 
 def ChangeDiff():
