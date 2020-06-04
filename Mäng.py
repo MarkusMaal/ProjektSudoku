@@ -299,6 +299,11 @@ def SolveBtn():
     # peamine while tsükkel
     while True:
         # solveone lahendab kõik lihtsasti leitavad üksused
+        prempties = 0
+        for row in cell_grid:
+            for item in row:
+                if str(item) == "0":
+                    prempties += 1
         SolveOne()
         cycles += 1
         # kontrollitakse, kas on alles tühjasid ruute
@@ -314,18 +319,29 @@ def SolveBtn():
         # keerulisemate sudokude võib olla vajalik ka üksikute 3x3 sektsioonide
         # eraldi kontrollimine
         trybox = 0
-        if cycles == 70:
-            trybox = 5
-        elif cycles == 120:
-            trybox = 6
-        elif cycles == 140:
-            trybox = 1
-        elif cycles == 160:
-            trybox = 2
-        elif cycles == 180:
-            trybox = 3
-        elif cycles == 190:
-            trybox = 4
+        if empties == prempties:
+            bigboxes = []
+            for kast in range(1, 10, 1):
+                if kast <= 3:
+                    offx = (kast - 1) * 3
+                    offy = 0
+                elif 3 < kast < 6:
+                    offx = (kast - 4) * 3
+                    offy = 3
+                elif kast > 6:
+                    offx = (kast - 7) * 3
+                    offy = 6
+                empties = 0
+                for i in range(offy, offy + 2, 1):
+                    for j in range(offx, offx + 2, 1):
+                        if int(cell_grid[i][j]) == 0:
+                            empties += 1
+                bigboxes.append(empties)
+            smallest = 999
+            for j, bb in enumerate(bigboxes):
+                if 0 < bb < smallest:
+                    smallest = bb
+                    trybox = j + 1
         if trybox > 0:
             # viimane abinõu: kontrolli üksikuid ruute suures kastis
             for kast in range(trybox, trybox + 1, 2):
@@ -348,18 +364,18 @@ def SolveBtn():
                                 candidates.remove(int(cell_grid[i][j]))
                         else:
                             empty_cells.append([j, i])
-                if len(empty_cells) < 3:
+                if empties < 4:
                     for candidate in candidates:
                         for one in empty_cells:
                             if str(cell_grid[one[1]][one[0]]) == "0":
                                 cell_backup = cell_grid[one[1]][one[0]]
                                 cell_grid[one[1]][one[0]] = candidate
-                                if KontrolliHorisontaalrida(cell_grid, one[1]) or KontrolliVertikaalrida(cell_grid,
-                                                                                                         one[0]):
+                                if KontrolliHorisontaalrida(cell_grid, one[1]) or KontrolliVertikaalrida(cell_grid, one[0]) or\
+                                    KontrolliSisemist(cell_grid, LeiaSuurKast(one[0] + 1, one[1] + 1)):
                                     cell_grid[one[1]][one[0]] = cell_backup
         # teade kasutajale, juhul kui sudokut ei saa mingil põhjusel lahendada
-        if cycles > 200:
-            messagebox.showinfo("Lahenduse leidmine nurjus", "Lahendust ei leitud. Võite proovida järgnevat:\n - Kustutage ruudud valede arvudega\n"
+        if cycles > 350:
+            messagebox.showerror("Lahenduse leidmine nurjus", "Lahendust ei leitud. Võite proovida järgnevat:\n - Kustutage ruudud valede arvudega\n"
                                 " - Proovige teist Sudokut")
             break
     # kuvab muudatused ekraanile
@@ -549,7 +565,6 @@ def KontrolliHorisontaalrida(int_cells, rida, nulliga=False):
 def ChangeDiff():
     global tase
     global raskusaste_nupp
-    print(tase)
     tase += 1
     if tase > 3:
         tase = 1
