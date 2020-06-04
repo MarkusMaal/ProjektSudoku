@@ -290,8 +290,35 @@ def KontrolliKõikSisemised(int_cells):
 
 
 def SolveBtn():
-    for i in range(9 * 9):
+    global cell_grid
+    cycles = 0
+    while True:
         SolveOne()
+        cycles += 1
+        empties = 0
+        for row in cell_grid:
+            for item in row:
+                if str(item) == "0":
+                    empties += 1
+        if empties == 0:
+            break
+        if cycles > 200:
+            break
+    global cells
+    cells = []
+    for i in range(0, 9):
+        for j in range(0, 9):
+            outpt = str(cell_grid[i][j]).replace("0", "0")
+            if cell_grid[i][j] == 0:
+                prt = False
+            else:
+                prt = True
+            cell = Cell(j * 55, i * 55, outpt, prt, cell_grid)
+            cells.append(cell)
+    DrawLines()
+
+    for cell in cells:
+        cell.DrawCell()
 
 
 def check_cells(c_g):
@@ -315,6 +342,7 @@ def check_cells(c_g):
 def SolveOne():
     global cell_grid
     solutions = []
+    prev_grid = cell_grid
     # kontrolli ridu
     for y in range(9):
         row = cell_grid[y]
@@ -327,39 +355,6 @@ def SolveOne():
             for x in range(len(row)):
                 if int(cell_grid[y][x]) == 0:
                     cell_grid[y][x] = candidates[-1]
-    # kontrolli kas mingi arv on ainus võimalik lahendus mingil real/veerus
-    for arv in range(9):
-        for y in range(9):
-            corrects = 0
-            correct = 0
-            if not str(arv + 1) in cell_grid[y]:
-                for x in range(9):
-                    if int(cell_grid[y][x]) == 0:
-                        backup_cell = cell_grid[y][x]
-                        cell_grid[y][x] = arv + 1
-                        if not KontrolliVertikaalrida(cell_grid, x - 1):
-                            corrects += 1
-                            correct = x
-                        cell_grid[y][x] = backup_cell
-                if corrects == 1:
-                    cell_grid[y][correct] = arv + 1
-        for x in range(9):
-            veerg = []
-            for y in range(9):
-                veerg.append(cell_grid[y][x])
-            corrects = 0
-            correct = 0
-            if not str(arv + 1) in veerg:
-                for y in range(9):
-                    if int(cell_grid[y][x]) == 0:
-                        backup_cell = cell_grid[y][x]
-                        cell_grid[y][x] = arv + 1
-                        if not KontrolliHorisontaalrida(cell_grid, y - 1):
-                            corrects += 1
-                            correct = y
-                        cell_grid[y][x] = backup_cell
-                if corrects == 1:
-                    cell_grid[correct][x] = arv + 1
 
     # kontrolli veerge
     for x in range(9):
@@ -432,25 +427,37 @@ def SolveOne():
                             solutions.append((str(i + 1), position_grid[p]))
     if len(solutions) > 0:
         cell_grid[solutions[0][1][0]][solutions[0][1][1]] = solutions[0][0][0]
-    global cells
-    cells = []
-    for i in range(0, 9):
-        for j in range(0, 9):
-            outpt = str(cell_grid[i][j]).replace("0", "0")
-            if cell_grid[i][j] == 0:
-                prt = False
-            else:
-                if offy - 1 < i < offy + 3 and offx - 1 < j < offx + 3:
-                    prt = False
-                else:
-                    prt = True
-            cell = Cell(j * 55, i * 55, outpt, prt, cell_grid)
-            cells.append(cell)
-    DrawLines()
+    if cell_grid == prev_grid:
+        for g in range(9):
+            for arv in range(9):
+                goodies = 0
+                good = 0
+                for subarv in range(9):
+                    cell_backup = cell_grid[arv][subarv]
+                    if int(cell_backup) == 0:
+                        cell_grid[arv][subarv] = (g + 1)
+                        if not(KontrolliVertikaalrida(cell_grid, subarv) or KontrolliHorisontaalrida(cell_grid, arv) or KontrolliSisemist(cell_grid, LeiaSuurKast(subarv, arv))):
+                            goodies += 1
+                            good = subarv
+                        cell_grid[arv][subarv] = cell_backup
+                if goodies == 1:
+                    cell_grid[arv][good] = (g + 1)
 
-    for cell in cells:
-        cell.DrawCell()
-
+    if cell_grid == prev_grid:
+        for g in range(9):
+            for column in range(9):
+                goodies = 0
+                good = 0
+                for row in range(9):
+                    cell_backup = cell_grid[row][column]
+                    if int(cell_backup) == 0:
+                        cell_grid[row][column] = (g + 1)
+                        if not (KontrolliHorisontaalrida(cell_grid, row) or KontrolliVertikaalrida(cell_grid, column) or KontrolliSisemist(cell_grid, LeiaSuurKast(column, row))):
+                            goodies += 1
+                            good = row
+                        cell_grid[row][column] = cell_backup
+                if goodies == 1:
+                    cell_grid[good][column] = (g + 1)
 
 def KontrolliHorisontaalrida(int_cells, rida, nulliga=False, tagasta_arv=False):
     märgid = []
@@ -630,7 +637,7 @@ def Draw(cell_grid, cells):
         Cell.DrawCell(i)
     kontrolli = Button(raam, text="Kontrolli", command=CheckBtn)
     kontrolli.place(x=525, y=250)
-    lahendus = Button(raam, text="Lahendus (hetkel ei toimi)", command=SolveBtn)
+    lahendus = Button(raam, text="Lahendus", command=SolveBtn)
     lahendus.place(x=525, y=150)
     NewGame()
 
