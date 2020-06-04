@@ -247,9 +247,9 @@ def NewGame():
         if tase == 1:
             näidis = possible_easy[randint(0, len(possible_easy) - 1)]
         elif tase == 2:
-            näidis = possible_easy[randint(0, len(possible_medium) - 1)]
+            näidis = possible_medium[randint(0, len(possible_medium) - 1)]
         else:
-            näidis = possible_easy[randint(0, len(possible_hard) - 1)]
+            näidis = possible_hard[randint(0, len(possible_hard) - 1)]
         for i, a in enumerate(näidis):
             one_grid = []
             for j, b in enumerate(a):
@@ -549,6 +549,7 @@ def KontrolliHorisontaalrida(int_cells, rida, nulliga=False):
 def ChangeDiff():
     global tase
     global raskusaste_nupp
+    print(tase)
     tase += 1
     if tase > 3:
         tase = 1
