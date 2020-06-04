@@ -302,10 +302,56 @@ def SolveBtn():
                     empties += 1
         if empties == 0:
             break
+        trybox = 0
+        if cycles == 70:
+            trybox = 5
+        elif cycles == 120:
+            trybox = 6
+        elif cycles == 140:
+            trybox = 1
+        elif cycles == 160:
+            trybox = 2
+        elif cycles == 180:
+            trybox = 3
+        elif cycles == 190:
+            trybox = 4
+        if trybox > 0:
+            # viimane abinõu: kontrolli üksikuid ruute suures kastis
+            for kast in range(trybox, trybox + 1, 2):
+                if kast <= 3:
+                    offx = (kast - 1) * 3
+                    offy = 0
+                elif 3 < kast < 6:
+                    offx = (kast - 4) * 3
+                    offy = 3
+                elif kast > 6:
+                    offx = (kast - 7) * 3
+                    offy = 6
+                empties = 0
+                empty_cells = []
+                candidates = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                for i in range(offy, offy + 2, 1):
+                    for j in range(offx, offx + 2, 1):
+                        if not str(cell_grid[i][j]) == "0":
+                            if int(cell_grid[i][j]) in candidates:
+                                candidates.remove(int(cell_grid[i][j]))
+                        else:
+                            empty_cells.append([j, i])
+                if len(empty_cells) < 3:
+                    for candidate in candidates:
+                        for one in empty_cells:
+                            if str(cell_grid[one[1]][one[0]]) == "0":
+                                cell_backup = cell_grid[one[1]][one[0]]
+                                cell_grid[one[1]][one[0]] = candidate
+                                if KontrolliHorisontaalrida(cell_grid, one[1]) or KontrolliVertikaalrida(cell_grid,
+                                                                                                         one[0]):
+                                    cell_grid[one[1]][one[0]] = cell_backup
+
         if cycles > 200:
-            messagebox.showinfo("Lahendust ei leitud. Võite proovida järgnevat:\n - Kustutage ruudud valede arvudega\n"
-                                " - Proovige teist Sudokut", "Lahenduse leidmine nurjus")
+            messagebox.showinfo("Lahenduse leidmine nurjus", "Lahendust ei leitud. Võite proovida järgnevat:\n - Kustutage ruudud valede arvudega\n"
+                                " - Proovige teist Sudokut")
             break
+
     global cells
     cells = []
     for i in range(0, 9):
@@ -340,6 +386,8 @@ def check_cells(c_g):
 
 
 # Lahendaja
+
+
 def SolveOne():
     global cell_grid
     solutions = []
@@ -459,7 +507,6 @@ def SolveOne():
                         cell_grid[row][column] = cell_backup
                 if goodies == 1:
                     cell_grid[good][column] = (g + 1)
-
 
 # kontrollib horistonaalset rida
 
