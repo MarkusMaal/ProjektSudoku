@@ -626,12 +626,6 @@ def Draw(cell_grid, cells):
     global raskusaste_nupp
     raskusaste_nupp = Button(raam, text="Raskusaste: Kerge", command=ChangeDiff)
     raskusaste_nupp.place(x=525, y=300)
-    hintbtn = Button(raam, text="Vihje", command=SolveOne)
-    hintbtn.place(x=525, y=100)
-    # global raskusaste_v2li
-    # raskusaste_v2li = Entry(raam, width=2)
-    # raskusaste_v2li.insert(0, "25")
-    # raskusaste_v2li.place(x=600, y=300)
     for i in cells:
         Cell.DrawCell(i)
     kontrolli = Button(raam, text="Kontrolli", command=CheckBtn)
