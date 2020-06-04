@@ -256,10 +256,6 @@ def NewGame():
                 one_grid.append(näidis[i][j])
             cell_grid.append(one_grid)
 
-    # see koodujupp eemaldab teatud numbrid kastidest
-    # kuni kaks korda
-    # hetkel pole kasutusel
-
     # kuvab numbrid ekraanile
     global cells
     cells = []
@@ -646,7 +642,7 @@ def Draw(cell_grid, cells):
         Cell.DrawCell(i)
     kontrolli = Button(raam, text="Kontrolli", command=CheckBtn)
     kontrolli.place(x=525, y=250)
-    lahendus = Button(raam, text="Lahendus", command=SolveBtn)
+    lahendus = Button(raam, text="Lahenda", command=SolveBtn)
     lahendus.place(x=525, y=150)
     NewGame()
 
