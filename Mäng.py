@@ -1,13 +1,13 @@
 from tkinter import *
-from tkinter import font
 from tkinter import messagebox
 from random import *
-import time
 
 # Sudoku projekt
+# versioon 1.0
 
-# kasuta_näidist = False
+# näidis on etteantud lahendatav sudoku
 näidis = []
+# tase määrab mängu raskusastme
 tase = 1
 
 
@@ -146,8 +146,8 @@ class Cell:
 # märgid - leitud märgid reast
 # duplikaate - kui True, leiti mitu ühesugust numbrit
 
-
-def KontrolliVertikaalrida(int_cells, veerg, nulliga=False, tagasta_arv=False):
+# Kontrollib vertikaalset rida
+def KontrolliVertikaalrida(int_cells, veerg, nulliga=False):
     märgid = []
     duplikaate = 0
     kontroll_list = []
@@ -165,23 +165,23 @@ def KontrolliVertikaalrida(int_cells, veerg, nulliga=False, tagasta_arv=False):
                     märgid.append(str(kontroll_list[i]))
                 else:
                     duplikaate += 1
-
-    if not tagasta_arv:
-        if duplikaate > 0:
-            return True
-        else:
-            return False
+    if duplikaate > 0:
+        return True
     else:
-        return duplikaate
+        return False
 
 
+# tkinteri raami loomine
 raam = Tk()
-raam.title("Sudoku")
+raam.title("Sudoku 1.0")
 raam.geometry("750x500")
 
+# tahvli lisamine
 tahvel = Canvas(raam, width=500, height=500, background="white")
 tahvel.grid()
 
+# loo sudoku ruudustik 2D massiivina, kus
+# üks list on üks rida
 cell_grid = []
 for i in range(9):
     one_grid = []
@@ -203,54 +203,58 @@ def DrawLines():
     tahvel.create_line(163, 0, 163, 500, width=3, fill="white")
     tahvel.create_line(328, 0, 328, 500, width=3, fill="white")
 
+# uue mängu funktsioon
+# see käivitatakse mängu laadimisel ja nupu "Uus mäng" vajutamisel
+
 
 def NewGame():
-    # mida suurem on muutaja raskusaste, seda rohkem on vihjeid ette antud
     possible_easy = []
     possible_medium = []
     possible_hard = []
-    for l in open("Sudokud.rdt", "r"):
-        if not l.strip()[0] == "#" and l.strip()[0] == "[":
-            fullrow = l.strip().replace("[", "").replace("]", "")
-            level = fullrow.split(":")[0]
-            content = fullrow.split(":")[1].replace(".", "000").replace(",", "00")
-            if level == "l=1":
-                levellist = []
-                for j in range(9):
-                    helplist = []
-                    for i in range(j * 9, j * 9 + 9):
-                        helplist.append(int(content[i]))
-                    levellist.append(helplist)
-                possible_easy.append(levellist)
-            elif level == "l=2":
-                levellist = []
-                for j in range(9):
-                    helplist = []
-                    for i in range(j * 9, j * 9 + 9):
-                        helplist.append(int(content[i]))
-                    levellist.append(helplist)
-                possible_medium.append(levellist)
-            elif level == "l=3":
-                levellist = []
-                for j in range(9):
-                    helplist = []
-                    for i in range(j * 9, j * 9 + 9):
-                        helplist.append(int(content[i]))
-                    levellist.append(helplist)
-                possible_hard.append(levellist)
     global cell_grid
-    cell_grid = []
-    if tase == 1:
-        näidis = possible_easy[randint(0, len(possible_easy) - 1)]
-    elif tase == 2:
-        näidis = possible_easy[randint(0, len(possible_medium) - 1)]
-    else:
-        näidis = possible_easy[randint(0, len(possible_hard) - 1)]
-    for i, a in enumerate(näidis):
-        one_grid = []
-        for j, b in enumerate(a):
-            one_grid.append(näidis[i][j])
-        cell_grid.append(one_grid)
+    current = cell_grid
+    while cell_grid == current:
+        for l in open("Sudokud.rdt", "r"):
+            if not l.strip()[0] == "#" and l.strip()[0] == "[":
+                fullrow = l.strip().replace("[", "").replace("]", "")
+                level = fullrow.split(":")[0]
+                content = fullrow.split(":")[1].replace(".", "000").replace(",", "00")
+                if level == "l=1":
+                    levellist = []
+                    for j in range(9):
+                        helplist = []
+                        for i in range(j * 9, j * 9 + 9):
+                            helplist.append(int(content[i]))
+                        levellist.append(helplist)
+                    possible_easy.append(levellist)
+                elif level == "l=2":
+                    levellist = []
+                    for j in range(9):
+                        helplist = []
+                        for i in range(j * 9, j * 9 + 9):
+                            helplist.append(int(content[i]))
+                        levellist.append(helplist)
+                    possible_medium.append(levellist)
+                elif level == "l=3":
+                    levellist = []
+                    for j in range(9):
+                        helplist = []
+                        for i in range(j * 9, j * 9 + 9):
+                            helplist.append(int(content[i]))
+                        levellist.append(helplist)
+                    possible_hard.append(levellist)
+        cell_grid = []
+        if tase == 1:
+            näidis = possible_easy[randint(0, len(possible_easy) - 1)]
+        elif tase == 2:
+            näidis = possible_easy[randint(0, len(possible_medium) - 1)]
+        else:
+            näidis = possible_easy[randint(0, len(possible_hard) - 1)]
+        for i, a in enumerate(näidis):
+            one_grid = []
+            for j, b in enumerate(a):
+                one_grid.append(näidis[i][j])
+            cell_grid.append(one_grid)
 
     # see koodujupp eemaldab teatud numbrid kastidest
     # kuni kaks korda
@@ -281,6 +285,7 @@ def CheckBtn():
     check_cells(cell_grid)
 
 
+# Kontrollib, kas kõik on õige ühes 3x3 ruudustikus
 def KontrolliKõikSisemised(int_cells):
     ret = False
     for i in range(9):
@@ -288,13 +293,20 @@ def KontrolliKõikSisemised(int_cells):
             ret = True
     return ret
 
-
+# Lahendaja kood
+# sain tööle :D
 def SolveBtn():
+    # määra cell_grid globaalseks muutujaks (muudatused toimuvad ka väljaspool tkinteri sündmust)
     global cell_grid
+    # tsüklid - proovib 200 korda leida lahendust sudokule
     cycles = 0
+    # peamine while tsükkel
     while True:
+        # solveone lahendab kõik lihtsasti leitavad üksused
         SolveOne()
         cycles += 1
+        # kontrollitakse, kas on alles tühjasid ruute
+        # kui pole, siis tsükkel peatatakse
         empties = 0
         for row in cell_grid:
             for item in row:
@@ -302,6 +314,9 @@ def SolveBtn():
                     empties += 1
         if empties == 0:
             break
+
+        # keerulisemate sudokude võib olla vajalik ka üksikute 3x3 sektsioonide
+        # eraldi kontrollimine
         trybox = 0
         if cycles == 70:
             trybox = 5
@@ -346,12 +361,12 @@ def SolveBtn():
                                 if KontrolliHorisontaalrida(cell_grid, one[1]) or KontrolliVertikaalrida(cell_grid,
                                                                                                          one[0]):
                                     cell_grid[one[1]][one[0]] = cell_backup
-
+        # teade kasutajale, juhul kui sudokut ei saa mingil põhjusel lahendada
         if cycles > 200:
             messagebox.showinfo("Lahenduse leidmine nurjus", "Lahendust ei leitud. Võite proovida järgnevat:\n - Kustutage ruudud valede arvudega\n"
                                 " - Proovige teist Sudokut")
             break
-
+    # kuvab muudatused ekraanile
     global cells
     cells = []
     for i in range(0, 9):
@@ -369,6 +384,7 @@ def SolveBtn():
         cell.DrawCell()
 
 
+# Kontrollib lahendust
 def check_cells(c_g):
     currentstate = True
     for i in range(1, 9, 1):
@@ -385,9 +401,7 @@ def check_cells(c_g):
 
 
 
-# Lahendaja
-
-
+# Lahendaja (jätk)
 def SolveOne():
     global cell_grid
     solutions = []
@@ -476,6 +490,8 @@ def SolveOne():
                             solutions.append((str(i + 1), position_grid[p]))
     if len(solutions) > 0:
         cell_grid[solutions[0][1][0]][solutions[0][1][1]] = solutions[0][0][0]
+    # leia üksikuid võimalusi (nt ainus arv, mis rea esimesse tühja kohta sobib on 7, teise tühja kohta sobib ainult 6)
+    # veergudest ja ridadest
     if cell_grid == prev_grid:
         for g in range(9):
             for arv in range(9):
@@ -511,7 +527,7 @@ def SolveOne():
 # kontrollib horistonaalset rida
 
 
-def KontrolliHorisontaalrida(int_cells, rida, nulliga=False, tagasta_arv=False):
+def KontrolliHorisontaalrida(int_cells, rida, nulliga=False):
     märgid = []
     duplikaate = 0
     kontroll_check = int_cells[rida]
@@ -527,15 +543,13 @@ def KontrolliHorisontaalrida(int_cells, rida, nulliga=False, tagasta_arv=False):
                     märgid.append(str(kontroll_check[i]))
                 else:
                     duplikaate += 1
-    if not tagasta_arv:
-        if duplikaate > 0:
-            return True
-        else:
-            return False
+    if duplikaate > 0:
+        return True
     else:
-        return duplikaate
+        return False
 
 
+# raskusastme muutmine
 def ChangeDiff():
     global tase
     global raskusaste_nupp
@@ -546,7 +560,7 @@ def ChangeDiff():
         text="Raskusaste: " + str(tase).replace("1", "Kerge").replace("2", "Keskmine").replace("3", "Raske"))
 
 
-# leiab suure kasti vastavalt väikse kasti koordinaatidele
+# leiab suure kasti (3x3 ala) vastavalt väikse kasti (1 ruut) koordinaatidele
 
 def LeiaSuurKast(x, y):
     if x < 3:
@@ -572,6 +586,7 @@ def LeiaSuurKast(x, y):
             return 9
 
 
+# Kontrollib, kas 3x3 sektsioon on õigesti lahendatud
 def KontrolliSisemist(int_cells, kast, nulliga=False):
     märgid = []
     duplikaate = False
@@ -616,14 +631,6 @@ def KontrolliSisemist(int_cells, kast, nulliga=False):
                     else:
                         duplikaate = True
     return duplikaate
-
-
-def CheckAuto():
-    global kasuta_näidist
-    if kasuta_näidist:
-        kasuta_näidist = False
-    elif not kasuta_näidist:
-        kasuta_näidist = True
 
 
 # joonistab ruudustiku
