@@ -4,7 +4,6 @@ from tkinter import messagebox
 from random import *
 import time
 
-
 # Sudoku projekt
 
 # kasuta_näidist = False
@@ -24,9 +23,11 @@ class Cell:
     # joonistab ruudu ja sisse numbri
     def DrawCell(self):
         textcol = "black"
-        #else:
+        # else:
         #    textcol = "black"
-        if KontrolliVertikaalrida(self.cell_grid, self.x // 55) or KontrolliHorisontaalrida(self.cell_grid, self.y // 55) or KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55)):
+        if KontrolliVertikaalrida(self.cell_grid, self.x // 55) or KontrolliHorisontaalrida(self.cell_grid,
+                                                                                            self.y // 55) or KontrolliSisemist(
+                self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55)):
             textcol = "red"
         self.joonis = tahvel.create_rectangle(self.x, self.y, self.x + 50, self.y + 50, fill="white", outline="black",
                                               width=1, activefill="lightblue")
@@ -37,9 +38,11 @@ class Cell:
                 self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), fill=textcol)
         else:
             if self.value == "0":
-                self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold', fill="white")
+                self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold',
+                                                 fill="white")
             else:
-                self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold', fill="black")
+                self.number = tahvel.create_text(self.x + 25, self.y + 25, text=str(self.value), font='Arial 12 bold',
+                                                 fill="black")
         tahvel.tag_bind(self.joonis, '<1>', self.clicked)
         tahvel.tag_bind(self.number, '<1>', self.clicked)
 
@@ -56,9 +59,9 @@ class Cell:
                     if not self.value == "0":
                         self.cell_grid[self.y // 55][self.x // 55] = event.char
                         cell_grid[self.y // 55][self.x // 55] = self.value
-                    #print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
-                    #print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
-                    #print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
+                    # print("Vertikaalne: " + str(KontrolliVertikaalrida(self.cell_grid, self.x // 55)))
+                    # print("Horisontaalne: " + str(KontrolliHorisontaalrida(self.cell_grid, self.y // 55)))
+                    # print("Sisemine: " + str(KontrolliSisemist(self.cell_grid, LeiaSuurKast(self.x // 55, self.y // 55))))
                     tahvel.delete(self.number)
                     tahvel.delete(self.joonis)
                     Cell.DrawCell(self)
@@ -114,7 +117,8 @@ class Cell:
                         Cell.DrawCell(self)
                         cell_grid[self.y // 55][self.x // 55] = self.value
                         Cell.arrow_move(i)
-    #nooltega liikumine
+
+    # nooltega liikumine
     def arrow_move(self):
         if not self.protected:
             tahvel.delete(self.number)
@@ -135,6 +139,7 @@ class Cell:
     # tagastab asukoha ruudustikus
     def GetLocation(self):
         return self.x // 55, self.y // 55
+
 
 # veerg - kontrollitav veerg
 # int_cells - kõik listid argumendina
@@ -197,7 +202,6 @@ def DrawLines():
     tahvel.create_line(0, 328, 500, 328, width=3, fill="white")
     tahvel.create_line(163, 0, 163, 500, width=3, fill="white")
     tahvel.create_line(328, 0, 328, 500, width=3, fill="white")
-
 
 
 def NewGame():
@@ -277,55 +281,17 @@ def CheckBtn():
     check_cells(cell_grid)
 
 
+def KontrolliKõikSisemised(int_cells):
+    ret = False
+    for i in range(9):
+        if not KontrolliSisemist(int_cells, i + 1) == ret:
+            ret = True
+    return ret
+
+
 def SolveBtn():
-    global cell_grid
-    highest = 0
-    highest_ids = []
-    for y in range(0, 9 ,3):
-        for x in range(0, 9, 3):
-            test = [cell_grid[y][x:x+3], cell_grid[y+1][x:x+3], cell_grid[y+2][x:x+3]]
-            cnt = 9
-            for i in test:
-                for j in i:
-                    if str(j) == "0":
-                        cnt -= 1
-            if cnt > highest:
-                highest = cnt
-                highest_ids = [y, x]
-    usable_ints = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    for y in range(highest_ids[0], highest_ids[0] + 3, 1):
-        for x in range(highest_ids[1], highest_ids[1] + 3, 1):
-            if cell_grid[y][x] in usable_ints:
-                usable_ints.remove(cell_grid[y][x])
-    for y in range(highest_ids[0], highest_ids[0] + 3, 1):
-        for x in range(highest_ids[1], highest_ids[1] + 3, 1):
-            if str(cell_grid[y][x]) == "0":
-                r1 = randint(0, len(usable_ints) - 1)
-                cell_grid[y][x] = usable_ints[r1]
-                while not KontrolliVertikaalrida(cell_grid, x, True) and not KontrolliHorisontaalrida(cell_grid, y, True):
-                    r1 = randint(0, len(usable_ints) - 1)
-                    cell_grid[y][x] = usable_ints[randint(0, len(usable_ints) - 1)]
-                usable_ints.remove(usable_ints[r1])
-    global cells
-    cells = []
-    for i in range(0, 9):
-        for j in range(0, 9):
-            outpt = str(cell_grid[i][j]).replace("0", "0")
-            if cell_grid[i][j] == 0:
-                prt = False
-            else:
-                if highest_ids[0] - 1 < i < highest_ids[0] + 3 and highest_ids[1] - 1 < j < highest_ids[1] + 3:
-                    prt = False
-                else:
-                    prt = True
-            cell = Cell(j * 55, i * 55, outpt, prt, cell_grid)
-            cells.append(cell)
-
-    DrawLines()
-
-    for cell in cells:
-        cell.DrawCell()
-
+    for i in range(9 * 9):
+        SolveOne()
 
 
 def check_cells(c_g):
@@ -344,6 +310,146 @@ def check_cells(c_g):
 
 
 # kontrollib horistonaalset rida
+
+
+def SolveOne():
+    global cell_grid
+    solutions = []
+    # kontrolli ridu
+    for y in range(9):
+        row = cell_grid[y]
+        candidates = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        for item in row:
+            if int(item) in candidates:
+                candidates.remove(int(item))
+        empties = 9 - len(candidates)
+        if empties == 8:
+            for x in range(len(row)):
+                if int(cell_grid[y][x]) == 0:
+                    cell_grid[y][x] = candidates[-1]
+    # kontrolli kas mingi arv on ainus võimalik lahendus mingil real/veerus
+    for arv in range(9):
+        for y in range(9):
+            corrects = 0
+            correct = 0
+            if not str(arv + 1) in cell_grid[y]:
+                for x in range(9):
+                    if int(cell_grid[y][x]) == 0:
+                        backup_cell = cell_grid[y][x]
+                        cell_grid[y][x] = arv + 1
+                        if not KontrolliVertikaalrida(cell_grid, x - 1):
+                            corrects += 1
+                            correct = x
+                        cell_grid[y][x] = backup_cell
+                if corrects == 1:
+                    cell_grid[y][correct] = arv + 1
+        for x in range(9):
+            veerg = []
+            for y in range(9):
+                veerg.append(cell_grid[y][x])
+            corrects = 0
+            correct = 0
+            if not str(arv + 1) in veerg:
+                for y in range(9):
+                    if int(cell_grid[y][x]) == 0:
+                        backup_cell = cell_grid[y][x]
+                        cell_grid[y][x] = arv + 1
+                        if not KontrolliHorisontaalrida(cell_grid, y - 1):
+                            corrects += 1
+                            correct = y
+                        cell_grid[y][x] = backup_cell
+                if corrects == 1:
+                    cell_grid[correct][x] = arv + 1
+
+    # kontrolli veerge
+    for x in range(9):
+        veerg = []
+        for y in range(9):
+            veerg.append(cell_grid[y][x])
+        candidates = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        for item in veerg:
+            if str(item) in str(candidates):
+                candidates.remove(int(item))
+        empties = 9 - len(candidates)
+        if empties == 8:
+            for y in range(len(veerg)):
+                if int(cell_grid[y][x]) == 0:
+                    cell_grid[y][x] = candidates[-1]
+    # kontrolli üksikuid ruute
+    for i in range(9):
+        for y in range(9):
+            for x in range(9):
+                box = LeiaSuurKast(x, y)
+                offx = 0
+                offy = 0
+                if box < 4:
+                    offy = 0
+                    offx = (box - 1) * 3
+                elif 3 < box < 6:
+                    offy = 3
+                    offx = (box - 4) * 3
+                elif box >= 6:
+                    offy = 6
+                    offx = (box - 7) * 3
+                # kuumkohad
+                spots = [0, 0, 0,
+                         0, 0, 0,
+                         0, 0, 0]
+                # kontrollitavad ruudud
+                checkables = [[offy, offx], [offy, offx + 1], [offy, offx + 2],
+                              [offy + 1, offx], [offy + 1, offx + 1], [offy + 1, offx + 2],
+                              [offy + 2, offx], [offy + 2, offx + 1], [offy + 2, offx + 2]]
+                checked_grid = []
+                position_grid = []
+                total_hots = 0
+                for l, thing in enumerate(checkables):
+                    checked_grid.append(cell_grid[thing[0]][thing[1]])
+                    position_grid.append((thing[0], thing[1]))
+                    cell_backup = cell_grid[thing[0]][thing[1]]
+                    if str(cell_grid[thing[0]][thing[1]]) == str(i + 1):
+                        break
+                    if str(cell_grid[thing[0]][thing[1]]) == "0":
+                        cell_grid[thing[0]][thing[1]] = str(i + 1)
+                        if not KontrolliSisemist(cell_grid, l + 1):
+                            if KontrolliHorisontaalrida(cell_grid, thing[0]):
+                                spots[l] += 1
+                                total_hots += 1
+                            elif KontrolliVertikaalrida(cell_grid, thing[1]):
+                                spots[l] += 1
+                                total_hots += 1
+                        else:
+                            total_hots = 9
+                            spots[l] += 1
+                            cell_grid[thing[0]][thing[1]] = cell_backup
+                            break
+                        cell_grid[thing[0]][thing[1]] = cell_backup
+                    else:
+                        spots[l] += 1
+                        total_hots += 1
+                if total_hots == 8:
+                    for p in range(9):
+                        if spots[p] == 0:
+                            solutions.append((str(i + 1), position_grid[p]))
+    if len(solutions) > 0:
+        cell_grid[solutions[0][1][0]][solutions[0][1][1]] = solutions[0][0][0]
+    global cells
+    cells = []
+    for i in range(0, 9):
+        for j in range(0, 9):
+            outpt = str(cell_grid[i][j]).replace("0", "0")
+            if cell_grid[i][j] == 0:
+                prt = False
+            else:
+                if offy - 1 < i < offy + 3 and offx - 1 < j < offx + 3:
+                    prt = False
+                else:
+                    prt = True
+            cell = Cell(j * 55, i * 55, outpt, prt, cell_grid)
+            cells.append(cell)
+    DrawLines()
+
+    for cell in cells:
+        cell.DrawCell()
 
 
 def KontrolliHorisontaalrida(int_cells, rida, nulliga=False, tagasta_arv=False):
@@ -369,8 +475,6 @@ def KontrolliHorisontaalrida(int_cells, rida, nulliga=False, tagasta_arv=False):
             return False
     else:
         return duplikaate
-
-
 
 
 def LeiaHorisontaalsedDuplikaadid(int_cells, rida):
@@ -400,6 +504,7 @@ def LeiaVertikaalsedDuplikaadid(int_cells, veerg):
                 duplikaate.append([i, veerg])
     return duplikaate
 
+
 def DuplikaatideArv(int_cells, y, x):
     märgid = []
     duplikaate = 0
@@ -428,7 +533,9 @@ def ChangeDiff():
     tase += 1
     if tase > 3:
         tase = 1
-    raskusaste_nupp.config(text="Raskusaste: " + str(tase).replace("1", "Kerge").replace("2", "Keskmine").replace("3", "Raske"))
+    raskusaste_nupp.config(
+        text="Raskusaste: " + str(tase).replace("1", "Kerge").replace("2", "Keskmine").replace("3", "Raske"))
+
 
 # leiab suure kasti vastavalt väikse kasti koordinaatidele
 
@@ -519,10 +626,12 @@ def Draw(cell_grid, cells):
     global raskusaste_nupp
     raskusaste_nupp = Button(raam, text="Raskusaste: Kerge", command=ChangeDiff)
     raskusaste_nupp.place(x=525, y=300)
-    #global raskusaste_v2li
-    #raskusaste_v2li = Entry(raam, width=2)
-    #raskusaste_v2li.insert(0, "25")
-    #raskusaste_v2li.place(x=600, y=300)
+    hintbtn = Button(raam, text="Vihje", command=SolveOne)
+    hintbtn.place(x=525, y=100)
+    # global raskusaste_v2li
+    # raskusaste_v2li = Entry(raam, width=2)
+    # raskusaste_v2li.insert(0, "25")
+    # raskusaste_v2li.place(x=600, y=300)
     for i in cells:
         Cell.DrawCell(i)
     kontrolli = Button(raam, text="Kontrolli", command=CheckBtn)
